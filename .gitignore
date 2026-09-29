@@ -1,0 +1,16 @@
+.venv*/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+models/
+runs/
+data/processed/
+*.egg-info/
+.book/*
+!.book/.gitkeep
+site/
+.ipynb_checkpoints/
+
+# GPU upload bundle: rebuild with python3 tools/build_gpu_zip.py
+llm-lora-tutorial-gpu.zip

@@ -1,0 +1,88 @@
+site_name: LoRA 微调与 vLLM 部署实操手册
+site_description: 写给非算法开发者、从零学习 LoRA 微调的实操手册：在一张 RTX 4090 上走通 QLoRA 微调、合并导出、vLLM 部署、API 调用与压测。
+docs_dir: .book
+site_dir: site
+use_directory_urls: true
+hooks:
+  - book/build.py
+watch:
+  - tasks
+  - lab
+  - data/README.md
+  - data/dataset.json
+  - book
+  - images
+  - notebooks
+theme:
+  name: material
+  language: zh
+  font: false
+  logo: assets/book.svg
+  favicon: assets/book.svg
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: 切换深色阅读
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: 切换浅色阅读
+  features:
+    - navigation.footer
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+    - toc.follow
+plugins:
+  - search:
+      lang: [en, zh]
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: 复制本节链接
+      toc_depth: 3
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+extra_css:
+  - assets/book.css
+extra:
+  generator: false
+copyright: LoRA 微调与 vLLM 部署实操手册
+validation:
+  nav:
+    omitted_files: ignore
+  links:
+    not_found: warn
+    anchors: warn
+    unrecognized_links: warn
+nav:
+  - 开始阅读: index.md
+  - 0. 目标与准备: chapters/00-start.md
+  - 1. 必要概念: chapters/01-concepts.md
+  - 2. 训练数据: chapters/02-data.md
+  - 3. GPU 准备: chapters/03-gpu.md
+  - 4. 训练与验证: chapters/04-training.md
+  - 5. 部署与调用: chapters/05-deployment.md
+  - 6. 效果评估: chapters/06-evaluation.md
+  - 7. 成本、排错与验收: chapters/07-troubleshooting.md
+  - 8. 开发者参考: chapters/08-developer.md
+  - 附录 A 核心训练代码: chapters/appendix-training-code.md
+  - 附录 B 数据速查: reference/data.md
+  - 附录 C 源码下载: reference/sources.md
+  - 附录 D 学习清单: reference/checklist.md
+  - 附录 E 验证记录: reference/verification.md

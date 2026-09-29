@@ -1,0 +1,4 @@
+# Install in .venv-train and register this interpreter as the Jupyter kernel.
+ipykernel==7.3.0
+# Loss curve in notebook step 7.
+matplotlib==3.10.9

@@ -1,0 +1,2 @@
+# ModelScope download only; no framework/audio/cv extras are needed.
+modelscope==1.34.0
