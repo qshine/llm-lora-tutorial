@@ -6,6 +6,10 @@
 
 ## 打开电子书
 
+在线阅读：<https://qshine.github.io/llm-lora-tutorial/>
+
+也可以在本地预览：
+
 ```bash
 ./book_review.sh
 ```

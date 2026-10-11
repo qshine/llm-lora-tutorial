@@ -8,6 +8,10 @@ Written for developers who don't work on ML and want to learn LoRA fine-tuning f
 
 ## Open the e-book
 
+Read online: <https://qshine.github.io/llm-lora-tutorial/>
+
+Or preview it locally:
+
 ```bash
 ./book_review.sh
 ```
