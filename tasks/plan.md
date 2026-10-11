@@ -1492,7 +1492,7 @@ HF_HUB_OFFLINE=1 .venv-serve/bin/vllm serve "$PWD/models/qwen3-4b" \
 
 `/v1/models` 现在会列出两个名字。把第 5.5 节示例里的 `MODEL` 依次改成 `qwen3-4b-base` 和 `science-lora` 各跑一遍，就是同一提示词下“微调前 vs 微调后”的对比。`--max-lora-rank` 必须不小于训练时的 rank（本教程是 16）。
 
-| | 合并后部署（10.4） | 挂载 adapter（10.6） |
+| | 合并后部署（5.4） | 挂载 adapter（5.6） |
 |---|---|---|
 | 磁盘 | 每个版本一份约 8 GB 的完整模型 | 一份基座 + 每个版本约 130 MB 的 adapter |
 | 推理速度 | 和原模型相同 | 每层多一次小矩阵计算，通常略慢 |

@@ -1,0 +1,65 @@
+# English edition. Normally built automatically into site/en/ by the hook in
+# book/build.py after `mkdocs build` / `mkdocs serve` of mkdocs.yml; it can also
+# be built alone with `mkdocs build -f mkdocs.en.yml`.
+INHERIT: mkdocs.yml
+site_name: "LoRA Fine-Tuning and vLLM Deployment: A Hands-On Guide"
+site_description: A hands-on guide for non-ML developers learning LoRA fine-tuning from scratch on one RTX 4090 — QLoRA fine-tuning, merging and export, vLLM deployment, API calls and load testing.
+docs_dir: .book-en
+site_dir: site/en
+theme:
+  language: en
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: Copy link to this section
+      toc_depth: 3
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+copyright: "LoRA Fine-Tuning and vLLM Deployment: A Hands-On Guide"
+extra:
+  generator: false
+  alternate:
+    - name: 中文
+      link: ../
+      lang: zh
+    - name: English
+      link: ./
+      lang: en
+nav:
+  - Start here: index.md
+  - 0. Goals and Preparation: chapters/00-start.md
+  - 1. Essential Concepts: chapters/01-concepts.md
+  - 2. Training Data: chapters/02-data.md
+  - 3. GPU Setup: chapters/03-gpu.md
+  - 4. Training and Validation: chapters/04-training.md
+  - 5. Deployment and API Calls: chapters/05-deployment.md
+  - 6. Evaluation: chapters/06-evaluation.md
+  - 7. Cost, Troubleshooting and Acceptance: chapters/07-troubleshooting.md
+  - 8. Developer Reference: chapters/08-developer.md
+  - Appendix A Core Training Code: chapters/appendix-training-code.md
+  - Appendix B Data Quick Reference: reference/data.md
+  - Appendix C Source Downloads: reference/sources.md
+  - Appendix D Learning Checklist: reference/checklist.md
+  - Appendix E Verification Log: reference/verification.md

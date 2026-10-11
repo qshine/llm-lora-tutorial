@@ -1,4 +1,5 @@
 """Run the notebook's actual training/save/reload code with a tiny CPU Qwen model."""
+import ast
 import json
 import math
 from pathlib import Path
@@ -21,19 +22,47 @@ from test_bundle import Tokenizer
 from test_training import tiny_model
 
 ROOT = Path(__file__).resolve().parents[1]
-NOTEBOOK = ROOT / "notebooks/01_gpu_train.ipynb"
+# 中文 Notebook 与英文版：代码逻辑必须完全相同，只有说明、注释和提示语不同。
+NOTEBOOKS = {"zh": ROOT / "notebooks/01_gpu_train.ipynb", "en": ROOT / "notebooks/01_gpu_train.en.ipynb"}
+WHY = {"zh": "为什么", "en": "Why"}
+NOT_FINISHED = {"zh": "未达到计划步数", "en": "Planned step count not reached"}
+CJK = re.compile(r"[\u4e00-\u9fff]")
 
 
-def cells():
-    return json.loads(NOTEBOOK.read_text())["cells"]
+@pytest.fixture(params=NOTEBOOKS)
+def lang(request):
+    return request.param
 
 
-def source(cell_id):
-    return "".join(next(cell for cell in cells() if cell["id"] == cell_id)["source"])
+def cells(lang="zh"):
+    return json.loads(NOTEBOOKS[lang].read_text())["cells"]
 
 
-def test_notebook_code_is_visible_unexecuted_and_explained_below():
-    notebook_cells = cells()
+def source(cell_id, lang="zh"):
+    return "".join(next(cell for cell in cells(lang) if cell["id"] == cell_id)["source"])
+
+
+def test_english_notebook_runs_the_same_code():
+    zh, en = cells("zh"), cells("en")
+    assert [(c["id"], c["cell_type"], c["metadata"]) for c in zh] == [(c["id"], c["cell_type"], c["metadata"]) for c in en]
+    for a, b in zip(zh, en):
+        if a["cell_type"] != "code":
+            continue
+        nodes = zip(ast.walk(ast.parse("".join(a["source"]))), ast.walk(ast.parse("".join(b["source"]))))
+        for x, y in nodes:
+            # Only user-facing Chinese strings may be translated; everything else is identical.
+            if isinstance(x, ast.Constant) and isinstance(x.value, str) and CJK.search(x.value):
+                assert isinstance(y, ast.Constant) and isinstance(y.value, str), a["id"]
+                continue
+            fields = lambda node: [(k, v) for k, v in ast.iter_fields(node) if not isinstance(v, (ast.AST, list))]
+            assert type(x) is type(y) and fields(x) == fields(y), (a["id"], ast.dump(x)[:200], ast.dump(y)[:200])
+            for k, v in ast.iter_fields(x):
+                if isinstance(v, list):
+                    assert len(v) == len(getattr(y, k)), (a["id"], k)
+
+
+def test_notebook_code_is_visible_unexecuted_and_explained_below(lang):
+    notebook_cells = cells(lang)
     assert len({cell["id"] for cell in notebook_cells}) == len(notebook_cells)
     for i, cell in enumerate(notebook_cells):
         if cell["cell_type"] != "code":
@@ -43,7 +72,7 @@ def test_notebook_code_is_visible_unexecuted_and_explained_below():
         compile(code, cell["id"], "exec")
         assert not any(wrapper in code for wrapper in ("subprocess", "train_python", "pip install", "lab.train", "make_trainer"))
         next_cell = notebook_cells[i + 1]
-        assert next_cell["cell_type"] == "markdown" and "为什么" in "".join(next_cell["source"])
+        assert next_cell["cell_type"] == "markdown" and WHY[lang] in "".join(next_cell["source"])
     # Local client examples are valid Python even though they are Markdown, not GPU cells.
     for cell in notebook_cells:
         if cell["cell_type"] == "markdown":
@@ -51,16 +80,16 @@ def test_notebook_code_is_visible_unexecuted_and_explained_below():
                 compile(example, cell["id"], "exec")
 
 
-def test_save_requires_finished_training_not_just_a_directory(tmp_path):
+def test_save_requires_finished_training_not_just_a_directory(tmp_path, lang):
     from types import SimpleNamespace
-    with pytest.raises(AssertionError, match="未达到计划步数"):
-        exec(source("save"), {"trainer": SimpleNamespace(state=SimpleNamespace(global_step=0)), "MAX_STEPS": 10})
+    with pytest.raises(AssertionError, match=NOT_FINISHED[lang]):
+        exec(source("save", lang), {"trainer": SimpleNamespace(state=SimpleNamespace(global_step=0)), "MAX_STEPS": 10})
     assert not (tmp_path / "training-complete.json").exists()
 
 
-def test_notebook_reads_side_by_side_splits_from_the_real_file():
+def test_notebook_reads_side_by_side_splits_from_the_real_file(lang):
     # 权重检查和分词器加载需要 GPU 主机上的完整模型；这里只执行 D1 读数据的部分。
-    code = source("data")
+    code = source("data", lang)
     code = code[code.index("# D1"):]
     env = dict(json=json, DATA_FILE=ROOT / "data/dataset.json", tag_splits=tag_splits, validate=validate)
     exec(code, env)
@@ -68,13 +97,13 @@ def test_notebook_reads_side_by_side_splits_from_the_real_file():
     assert env["episodes"] == read_dataset(ROOT / "data/dataset.json")[0]
 
 
-def test_notebook_builds_rows_from_one_file_without_validation_or_future_leakage():
+def test_notebook_builds_rows_from_one_file_without_validation_or_future_leakage(lang):
     episodes, facts = read_dataset(ROOT / "data/dataset.json")
     env = dict(episodes=episodes, facts=facts, tokenizer=Tokenizer(), MAX_LENGTH=4096,
                ACCUMULATION=16, EPOCHS=1, math=math,
                Dataset=Dataset, expand_episode=expand_episode,
                build_messages=build_messages, render_pair=render_pair)
-    exec(source("prepare-data"), env)
+    exec(source("prepare-data", lang), env)
     rows = env["rows"]
     assert len(rows) == 1150
     assert len(env["val_rows"]) == 115 and env["MAX_STEPS"] == 72
@@ -91,7 +120,7 @@ def test_notebook_builds_rows_from_one_file_without_validation_or_future_leakage
     assert set(env["val_dataset"].column_names) == {"input_ids", "completion_mask"}
 
 
-def test_actual_notebook_training_reload_and_export_cells(tmp_path, monkeypatch):
+def test_actual_notebook_training_reload_and_export_cells(tmp_path, monkeypatch, lang):
     tokenizer, base = tiny_model(lora=False)
     from tokenizers.pre_tokenizers import Whitespace
     tokenizer.backend_tokenizer.pre_tokenizer = Whitespace()
@@ -142,7 +171,7 @@ def test_actual_notebook_training_reload_and_export_cells(tmp_path, monkeypatch)
     monkeypatch.setenv("MPLBACKEND", "Agg")
     probe = torch.tensor([[3, 4]])
     for name in ("answer-function", "lora", "trainer", "train", "loss-curve", "save"):
-        exec(source(name), env)
+        exec(source(name, lang), env)
     with torch.no_grad():
         expected = env["model"].eval()(probe).logits.clone()
     assert (env["RUN_DIR"] / "loss-curve.png").stat().st_size > 0
@@ -152,11 +181,11 @@ def test_actual_notebook_training_reload_and_export_cells(tmp_path, monkeypatch)
     assert json.loads((env["RUN_DIR"] / "dataset.json").read_text()) == env["dataset"]
     assert env["manifest"]["contract"]["data_sha256"] == sha(env["RUN_DIR"] / "dataset.json")
     for name in ("release-training", "reload"):
-        exec(source(name), env)
+        exec(source(name, lang), env)
     with torch.no_grad():
         assert torch.allclose(expected, env["new_model"].eval()(probe).logits, atol=1e-6)
     for name in ("evaluate", "release-inference", "merge", "check-merged"):
-        exec(source(name), env)
+        exec(source(name, lang), env)
     check = json.loads((env["RUN_DIR"] / "inference-check.json").read_text())
     assert check["nonempty_replies"] == 1 and not check["quality_reviewed"]
     assert json.loads((env["RUN_DIR"] / "merged-inference-check.json").read_text())["reply"]

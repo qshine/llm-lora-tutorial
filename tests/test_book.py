@@ -105,3 +105,43 @@ def test_removed_modules_cannot_survive_as_generated_source_downloads(tmp_path):
     assert not any(path.exists() for path in stale_paths)
     assert (tmp_path / 'reference/code/lab/train.py.md').is_file()
     assert (tmp_path / 'downloads/source/lab/train.py').read_bytes() == (ROOT / 'lab/train.py').read_bytes()
+
+
+def test_english_edition_builds_with_the_same_pages_and_code(tmp_path):
+    zh = build_book(ROOT, tmp_path / 'zh')
+    en = build_book(ROOT, tmp_path / 'en', 'en')
+    # 同一路径两种语言，语言切换才能停留在同一页。
+    assert en['chapters'] == zh['chapters'] and en['source'] == 'tasks/plan.en.md'
+    pages = lambda folder: sorted(p.relative_to(folder).as_posix() for p in folder.rglob('*.md'))
+    assert pages(tmp_path / 'en') == pages(tmp_path / 'zh')
+    original = (ROOT / 'tasks/plan.en.md').read_text()
+    compiled = '\n'.join((tmp_path / 'en' / page).read_text() for page in en['chapters'])
+    pattern = r'^```[^\n]*\n.*?^```$'
+    assert re.findall(pattern, compiled, re.M | re.S) == re.findall(pattern, original, re.M | re.S)
+    assert (tmp_path / 'en/chapters/04-training.md').read_text().startswith('# 4. ')
+    assert '../downloads/notebooks/01_gpu_train.en.ipynb' in (tmp_path / 'en/chapters/03-gpu.md').read_text()
+    assert (tmp_path / 'en/downloads/notebooks/01_gpu_train.en.ipynb').read_bytes() == \
+        (ROOT / 'notebooks/01_gpu_train.en.ipynb').read_bytes()
+    viewer = (tmp_path / 'en/reference/code/data/dataset.json.md').read_text()
+    assert 'The only data file to maintain' in viewer and '<summary>Expand all raw records' in viewer
+    assert '[Download the GPU training notebook](../downloads/notebooks/01_gpu_train.en.ipynb)' in \
+        (tmp_path / 'en/reference/sources.md').read_text()
+    for page in (tmp_path / 'en').rglob('*.md'):
+        text = re.sub(r'^(`{3,})[^\n]*\n.*?^\1\s*$', '', page.read_text(), flags=re.M | re.S)
+        for target in re.findall(r'\]\(([^)\s]+)\)', text):
+            if not re.match(r'https?://|mailto:|#', target):
+                assert (page.parent / target.split('#')[0]).exists(), (page, target)
+
+
+def test_both_mkdocs_configs_list_the_same_pages_and_link_each_other():
+    import yaml
+
+    def load(name):
+        # Material's !!python/name tags are not used here; plain YAML is enough.
+        return yaml.safe_load((ROOT / name).read_text())
+
+    zh, en = load('mkdocs.yml'), load('mkdocs.en.yml')
+    assert en['INHERIT'] == 'mkdocs.yml' and en['theme']['language'] == 'en'
+    assert [list(item.values())[0] for item in zh['nav']] == [list(item.values())[0] for item in en['nav']]
+    assert [alt['lang'] for alt in zh['extra']['alternate']] == [alt['lang'] for alt in en['extra']['alternate']]
+    assert en['site_dir'] == zh['site_dir'] + '/en'

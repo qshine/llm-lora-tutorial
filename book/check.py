@@ -35,10 +35,11 @@ def check_site(directory: Path, base_path='/'):
             url = urlsplit(link)
             if url.scheme or url.netloc:
                 continue
-            # A 404 can be served at any depth, so MkDocs uses the site prefix.
+            # A 404 can be served at any depth, so MkDocs uses the site prefix
+            # (the English edition's 404 under en/ uses the same prefix plus en/).
             # Normal pages must remain relative to work at a project subpath.
             if url.path.startswith('/'):
-                if path != directory / '404.html' or not url.path.startswith(base_path):
+                if path.name != '404.html' or not url.path.startswith(base_path):
                     failures.append(f'{path.relative_to(directory)}: non-portable link {link}')
                     continue
                 target = (directory / unquote(url.path[len(base_path):])).resolve()

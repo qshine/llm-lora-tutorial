@@ -6,7 +6,7 @@
 
 ## 打开电子书
 
-在线阅读：<https://qshine.github.io/llm-lora-tutorial/>
+在线阅读：<https://qshine.github.io/llm-lora-tutorial/>（页面右上角可切换中文 / English，英文版在 [`/en/`](https://qshine.github.io/llm-lora-tutorial/en/)）
 
 也可以在本地预览：
 
@@ -39,7 +39,7 @@ Notebook 直接读取这个 JSON，在内存中生成训练样本，无需预先
 
 ## 在 GPU 上逐格执行
 
-运行 `python3 tools/build_gpu_zip.py` 生成 `llm-lora-tutorial-gpu.zip`，上传到 GPU 数据盘并解压。按教程第 3 章准备环境、从魔搭下载完整模型并校验，再打开 [01_gpu_train.ipynb](notebooks/01_gpu_train.ipynb)，选择 **LoRA · Python 3.11** 内核。
+运行 `python3 tools/build_gpu_zip.py` 生成 `llm-lora-tutorial-gpu.zip`，上传到 GPU 数据盘并解压。按教程第 3 章准备环境、从魔搭下载完整模型并校验，再打开 [01_gpu_train.ipynb](notebooks/01_gpu_train.ipynb)，选择 **LoRA · Python 3.11** 内核。英文版 [01_gpu_train.en.ipynb](notebooks/01_gpu_train.en.ipynb) 运行完全相同的代码，只是说明和注释为英文。
 
 Notebook 针对 RTX 4090 / 24 GB，以直接的 Python 代码展示原模型回答、LoRA 配置、1 个 Epoch 训练（约 72 步）、loss 曲线、保存、重载、人工评估与 BF16 合并。每段代码下面解释用途和理由；环境安装与模型下载放在电子书中。最后附 GPU 终端 vLLM 部署和本地调用示例；教程第 5 章还包括 KV Cache 显存估算、直接挂载 adapter、OpenAI SDK 流式调用和 `vllm bench serve` 压测。
 
