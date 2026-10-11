@@ -1,5 +1,7 @@
 # LoRA 微调与 vLLM 部署练习：小学科学探索伙伴
 
+**简体中文** | [English](README.en.md)
+
 写给不做算法、想从零学习 LoRA 微调的开发者，不需要机器学习背景。在一张 RTX 4090 上亲手完成：QLoRA 微调 → 保存与重载 → BF16 合并 → vLLM 部署成 OpenAI 兼容 API → 本地调用与压测，并弄清每一步显存花在哪里。练习任务是用中文回答小学生的科学问题。
 
 ## 打开电子书
@@ -35,7 +37,7 @@ Notebook 直接读取这个 JSON，在内存中生成训练样本，无需预先
 
 运行 `python3 tools/build_gpu_zip.py` 生成 `llm-lora-tutorial-gpu.zip`，上传到 GPU 数据盘并解压。按教程第 3 章准备环境、从魔搭下载完整模型并校验，再打开 [01_gpu_train.ipynb](notebooks/01_gpu_train.ipynb)，选择 **LoRA · Python 3.11** 内核。
 
-Notebook 针对 RTX 4090 / 24 GB，以直接的 Python 代码展示原模型回答、LoRA 配置、1 个 Epoch 训练（约 72 步）、loss 曲线、保存、重载、人工评估与 BF16 合并。每段代码下面解释用途和理由；环境安装与模型下载放在电子书中。最后附 GPU 终端 vLLM 部署和本地调用示例；教程第 10 章还包括 KV Cache 显存估算、直接挂载 adapter、OpenAI SDK 流式调用和 `vllm bench serve` 压测。
+Notebook 针对 RTX 4090 / 24 GB，以直接的 Python 代码展示原模型回答、LoRA 配置、1 个 Epoch 训练（约 72 步）、loss 曲线、保存、重载、人工评估与 BF16 合并。每段代码下面解释用途和理由；环境安装与模型下载放在电子书中。最后附 GPU 终端 vLLM 部署和本地调用示例；教程第 5 章还包括 KV Cache 显存估算、直接挂载 adapter、OpenAI SDK 流式调用和 `vllm bench serve` 压测。
 
 默认产物在 `runs/science-001/`：`training-complete.json` 记录训练完成，`adapter/` 是 LoRA 增量，`merged-model/` 是供 vLLM 使用的完整模型。可生成回答不代表质量提升，需查看 `answer-review.json` 并完成评审。
 

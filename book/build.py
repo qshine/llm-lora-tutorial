@@ -74,7 +74,7 @@ def rewrite(text: str, source: str, destination: str, routes: dict, *, promote=F
 
 def source_files(root: Path):
     """Explicit publication allowlist: never walk model/cache/secret folders."""
-    paths = [root / 'README.md', root / 'pyproject.toml', root / '.gitignore', root / 'book_review.sh',
+    paths = [root / 'README.md', root / 'README.en.md', root / 'pyproject.toml', root / '.gitignore', root / 'book_review.sh',
              root / 'GPU_UPLOAD_README.md']
     paths += list(root.glob('requirements-*.txt'))
     for folder in ('lab', 'tests', 'tools'):
