@@ -1,0 +1,73 @@
+# Korean edition: built into site/ko/ by the book/build.py hook after the Chinese build
+# (or alone with `mkdocs build -f mkdocs.ko.yml`).
+INHERIT: mkdocs.yml
+plugins:
+  - search:
+      lang: [en, ko]
+site_name: "LoRA 파인튜닝과 vLLM 배포 실전 가이드"
+site_description: "ML 경험이 없는 개발자가 RTX 4090 한 장으로 LoRA 파인튜닝을 처음부터 배우는 실전 가이드: QLoRA 파인튜닝, 병합과 내보내기, vLLM 배포, API 호출과 부하 테스트."
+docs_dir: .book-ko
+site_dir: site/ko
+theme:
+  language: ko
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: 다크 모드로 전환
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: 라이트 모드로 전환
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: 이 섹션 링크 복사
+      toc_depth: 3
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+copyright: "LoRA 파인튜닝과 vLLM 배포 실전 가이드"
+extra:
+  generator: false
+  alternate:
+    - name: 中文
+      link: ../
+      lang: zh
+    - name: English
+      link: ../en/
+      lang: en
+    - name: 日本語
+      link: ../ja/
+      lang: ja
+    - name: 한국어
+      link: ./
+      lang: ko
+nav:
+  - 시작하기: index.md
+  - 0. 목표와 준비: chapters/00-start.md
+  - 1. 필수 개념: chapters/01-concepts.md
+  - 2. 학습 데이터: chapters/02-data.md
+  - 3. GPU 준비: chapters/03-gpu.md
+  - 4. 학습과 검증: chapters/04-training.md
+  - 5. 배포와 API 호출: chapters/05-deployment.md
+  - 6. 효과 평가: chapters/06-evaluation.md
+  - 7. 비용, 문제 해결, 인수 확인: chapters/07-troubleshooting.md
+  - 8. 개발자 참고: chapters/08-developer.md
+  - 부록 A 핵심 학습 코드: chapters/appendix-training-code.md
+  - 부록 B 데이터 요약: reference/data.md
+  - 부록 C 소스 다운로드: reference/sources.md
+  - 부록 D 학습 체크리스트: reference/checklist.md
+  - 부록 E 검증 기록: reference/verification.md

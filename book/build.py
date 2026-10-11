@@ -16,13 +16,15 @@ SLUGS = (
     'appendix-training-code',
 )
 
-# 两种语言共用同一套页面路径：中文站在根目录，英文站在 en/。
-# 英文正文是同名的 *.en.md 文件；代码、数据和图片两边共用。
+# 各语言共用同一套页面路径：中文站在根目录，其他语言在 <lang>/ 子目录。
+# 译文是同名的 *.<lang>.md 文件；代码、数据和图片各语言共用。
+# 只有中英文有 Notebook，日文、韩文版链接英文 Notebook（代码完全相同）。
 LANGUAGES = {
     'zh': {
         'suffix': '',
         'docs_dir': '.book',
         'config': 'mkdocs.yml',
+        'notebook': 'notebooks/01_gpu_train.ipynb',
         'dataset': ('唯一需要维护的数据文件：{facts} 张事实卡，对话按集合平级存放（{sizes}）。'
                     'facts 提供每题可依据的资料，train/val/test 提供示范对话；[逐字段说明与使用位置]({guide})。\n\n'
                     '## 第一段对话和它引用的事实\n\n下方只摘取一个完整样例，保留顶层结构；全部数据在折叠区与原文件中。\n\n'),
@@ -43,6 +45,7 @@ LANGUAGES = {
         'suffix': '.en',
         'docs_dir': '.book-en',
         'config': 'mkdocs.en.yml',
+        'notebook': 'notebooks/01_gpu_train.en.ipynb',
         'dataset': ('The only data file to maintain: {facts} fact cards, with conversations stored side by side per split ({sizes}). '
                     'facts supply the material each question may rely on; train/val/test supply the example conversations; '
                     '[field-by-field guide and where each field is used]({guide}).\n\n'
@@ -61,6 +64,54 @@ LANGUAGES = {
                     'The local GPU upload bundle from chapter 3 also contains the tokenizer; the general source bundle above contains no model cache.\n\n'
                     '| File | Read |\n| --- | --- |\n'),
         'open': 'Open',
+    },
+    'ja': {
+        'suffix': '.ja',
+        'docs_dir': '.book-ja',
+        'config': 'mkdocs.ja.yml',
+        'notebook': 'notebooks/01_gpu_train.en.ipynb',
+        'dataset': ('メンテナンスするデータファイルはこれ 1 つだけです：ファクトカード {facts} 枚と、分割ごとに並べて保存した会話（{sizes}）。'
+                    'facts は各質問が根拠にできる資料、train/val/test はお手本となる会話です。'
+                    '[フィールドごとの説明と使われる場所]({guide})。\n\n'
+                    '## 最初の会話と、それが参照するファクト\n\n'
+                    '以下ではトップレベルの構造を保ったまま完全なサンプルを 1 つだけ示します。全データは折りたたみ部分と元ファイルにあります。\n\n'),
+        'size': '{split} {count} 件',
+        'size_sep': '、',
+        'expand': 'すべての元データを展開',
+        'viewer': '[元ファイルを表示]({link}) · [すべてのソース]({index})',
+        'sources': ('# ソースコードとデータ\n\nブラウザでスクリプトを読むか、練習パッケージ一式をダウンロードしてローカルで実行できます。\n\n'
+                    '[練習パッケージ ZIP をダウンロード](../downloads/lora-lab.zip){{ .md-button .md-button--primary }}\n\n'
+                    'パッケージにはチュートリアル、Python コード、テスト、依存関係リスト、候補データが含まれます。'
+                    'モデルの重み、学習結果、ローカル環境は含みません。データはまだレビューが必要です。\n\n'
+                    '[GPU 学習ノートブックをダウンロード（英語版）](../downloads/{notebook}) · [使い方](../chapters/03-gpu.md)\n\n'
+                    'ノートブックはパッケージ内の data/dataset.json を直接読み込むため、プロジェクトのコードと一緒に使ってください。'
+                    '第 3 章のローカル GPU アップロード用パッケージにはトークナイザーも含まれます。上の汎用ソースパッケージにはモデルキャッシュは含まれません。\n\n'
+                    '| ファイル | 閲覧 |\n| --- | --- |\n'),
+        'open': '開く',
+    },
+    'ko': {
+        'suffix': '.ko',
+        'docs_dir': '.book-ko',
+        'config': 'mkdocs.ko.yml',
+        'notebook': 'notebooks/01_gpu_train.en.ipynb',
+        'dataset': ('관리할 데이터 파일은 이것 하나뿐입니다: 팩트 카드 {facts}장과 분할별로 나란히 저장한 대화({sizes}). '
+                    'facts는 각 질문이 근거로 삼을 수 있는 자료이고, train/val/test는 예시 대화입니다. '
+                    '[필드별 설명과 사용 위치]({guide}).\n\n'
+                    '## 첫 번째 대화와 그 대화가 인용하는 팩트\n\n'
+                    '아래에는 최상위 구조를 유지한 채 완전한 샘플 하나만 보여 줍니다. 전체 데이터는 접힌 영역과 원본 파일에 있습니다.\n\n'),
+        'size': '{split} {count}개',
+        'size_sep': ', ',
+        'expand': '전체 원본 레코드 펼치기',
+        'viewer': '[원본 파일 보기]({link}) · [전체 소스]({index})',
+        'sources': ('# 소스 코드와 데이터\n\n브라우저에서 스크립트를 읽거나, 실습 패키지 전체를 내려받아 로컬에서 실행할 수 있습니다.\n\n'
+                    '[실습 패키지 ZIP 다운로드](../downloads/lora-lab.zip){{ .md-button .md-button--primary }}\n\n'
+                    '패키지에는 튜토리얼, Python 코드, 테스트, 의존성 목록, 후보 데이터가 들어 있습니다. '
+                    '모델 가중치, 학습 결과, 로컬 환경은 포함하지 않습니다. 데이터는 아직 검토가 필요합니다.\n\n'
+                    '[GPU 학습 노트북 다운로드(영어판)](../downloads/{notebook}) · [사용 방법](../chapters/03-gpu.md)\n\n'
+                    '노트북은 패키지 안의 data/dataset.json을 직접 읽으므로 프로젝트 코드와 함께 사용해야 합니다. '
+                    '3장의 로컬 GPU 업로드 패키지에는 토크나이저도 들어 있고, 위의 일반 소스 패키지에는 모델 캐시가 없습니다.\n\n'
+                    '| 파일 | 보기 |\n| --- | --- |\n'),
+        'open': '열기',
     },
 }
 
@@ -128,15 +179,15 @@ def rewrite(text: str, source: str, destination: str, routes: dict, *, promote=F
 
 def source_files(root: Path):
     """Explicit publication allowlist: never walk model/cache/secret folders."""
-    paths = [root / 'README.md', root / 'README.en.md', root / 'pyproject.toml', root / '.gitignore', root / 'book_review.sh',
-             root / 'GPU_UPLOAD_README.md', root / 'GPU_UPLOAD_README.en.md']
+    paths = [root / 'pyproject.toml', root / '.gitignore', root / 'book_review.sh', root / 'LICENSE']
+    paths += list(root.glob('README*.md')) + list(root.glob('GPU_UPLOAD_README*.md'))
     paths += list(root.glob('requirements-*.txt'))
     for folder in ('lab', 'tests', 'tools'):
         paths += list((root / folder).glob('*.py'))
     paths += list((root / 'tasks').glob('*.md'))
-    paths += [root / 'data/README.md', root / 'data/README.en.md', root / 'data/dataset.json']
+    paths += list((root / 'data').glob('README*.md')) + [root / 'data/dataset.json']
     paths += [p for p in (root / 'images').iterdir() if p.suffix in ('.png', '.jpg')]
-    paths += [root / 'notebooks/01_gpu_train.ipynb', root / 'notebooks/01_gpu_train.en.ipynb']
+    paths += list((root / 'notebooks').glob('01_gpu_train*.ipynb'))
     paths += [root / 'lab/download-lock.json']
     return sorted(path for path in paths if path.is_file())
 
@@ -148,9 +199,9 @@ def write(path: Path, content: str):
 
 def build_book(root: Path, output: Path, lang: str = 'zh'):
     ui = LANGUAGES[lang]
-    plan, todo, verification, data_readme, notebook = (
-        localized(p, lang) for p in ('tasks/plan.md', 'tasks/todo.md', 'tasks/verification.md',
-                                     'data/README.md', 'notebooks/01_gpu_train.ipynb'))
+    plan, todo, verification, data_readme = (
+        localized(p, lang) for p in ('tasks/plan.md', 'tasks/todo.md', 'tasks/verification.md', 'data/README.md'))
+    notebook = ui['notebook']
     output.mkdir(parents=True, exist_ok=True)
     original = (root / plan).read_text(encoding='utf-8')
     intro, chapters = split_chapters(original)
@@ -230,8 +281,8 @@ def build_book(root: Path, output: Path, lang: str = 'zh'):
             shutil.copyfile(path, target)
     with ZipFile(output / 'downloads/lora-lab.zip', 'w', ZIP_DEFLATED) as archive:
         # Include book files too, so the root README's preview instructions work.
-        extras = list((root / 'book').rglob('*')) + [root / 'mkdocs.yml', root / 'mkdocs.en.yml',
-                                                   root / '.book/.gitkeep', root / '.book-en/.gitkeep']
+        extras = list((root / 'book').rglob('*')) + list(root.glob('mkdocs*.yml'))
+        extras += [root / settings['docs_dir'] / '.gitkeep' for settings in LANGUAGES.values()]
         extras += list((root / '.github/workflows').glob('*.yml'))
         for path in sorted(set(files + extras)):
             if path.is_file() and '__pycache__' not in path.parts and path.suffix != '.pyc':
@@ -246,7 +297,8 @@ def build_book(root: Path, output: Path, lang: str = 'zh'):
 
 
 def config_language(config):
-    return 'en' if config['theme']['language'] == 'en' else 'zh'
+    language = config['theme']['language']
+    return language if language in LANGUAGES else 'zh'
 
 
 def on_config(config):
@@ -254,7 +306,7 @@ def on_config(config):
     lang = config_language(config)
     site_url = os.environ.get('BOOK_SITE_URL')
     if site_url:
-        config['site_url'] = site_url.rstrip('/') + '/' + ('en/' if lang == 'en' else '')
+        config['site_url'] = site_url.rstrip('/') + '/' + ('' if lang == 'zh' else f'{lang}/')
     result = build_book(root, Path(config['docs_dir']), lang)
     result['base_path'] = urlsplit(config['site_url'] or '/').path
     write(Path(config['docs_dir']) / 'book-manifest.json', json.dumps(result, ensure_ascii=False, indent=2) + '\n')
@@ -262,18 +314,21 @@ def on_config(config):
 
 
 def on_post_build(config):
-    # 中文站构建完成后，把英文站构建到同一站点的 en/ 子目录：
-    # mkdocs build / serve 一条命令就得到可互相切换的双语站点。
+    # 中文站构建完成后，把其他语言构建到同一站点的 <lang>/ 子目录：
+    # mkdocs build / serve 一条命令就得到可互相切换的多语言站点。
     if config_language(config) != 'zh':
         return
     from mkdocs.commands.build import build
     from mkdocs.config import load_config
     root = Path(__file__).resolve().parents[1]
-    english = load_config(str(root / LANGUAGES['en']['config']), site_dir=str(Path(config['site_dir']) / 'en'),
-                          strict=config['strict'])
-    build(english)
-    # 托管平台只用站点根目录的 404.html；英文站自己的 404 页链接前缀不对，删掉。
-    (Path(english['site_dir']) / '404.html').unlink(missing_ok=True)
+    for lang, settings in LANGUAGES.items():
+        if lang == 'zh':
+            continue
+        edition = load_config(str(root / settings['config']), site_dir=str(Path(config['site_dir']) / lang),
+                              strict=config['strict'])
+        build(edition)
+        # 托管平台只用站点根目录的 404.html；子站点自己的 404 页链接前缀不对，删掉。
+        (Path(edition['site_dir']) / '404.html').unlink(missing_ok=True)
 
 
 def on_serve(server, config, builder):

@@ -64,7 +64,7 @@ extra_javascript:
   - assets/language.js
 extra:
   generator: false
-  # 英文版由 book/build.py 在中文站构建后生成到 en/，见 mkdocs.en.yml。
+  # 其他语言由 book/build.py 在中文站构建后生成到 <lang>/，见 mkdocs.<lang>.yml。
   alternate:
     - name: 中文
       link: ./
@@ -72,6 +72,12 @@ extra:
     - name: English
       link: en/
       lang: en
+    - name: 日本語
+      link: ja/
+      lang: ja
+    - name: 한국어
+      link: ko/
+      lang: ko
 copyright: LoRA 微调与 vLLM 部署实操手册
 validation:
   nav:

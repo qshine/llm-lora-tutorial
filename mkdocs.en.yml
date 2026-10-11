@@ -47,6 +47,12 @@ extra:
     - name: English
       link: ./
       lang: en
+    - name: 日本語
+      link: ../ja/
+      lang: ja
+    - name: 한국어
+      link: ../ko/
+      lang: ko
 nav:
   - Start here: index.md
   - 0. Goals and Preparation: chapters/00-start.md

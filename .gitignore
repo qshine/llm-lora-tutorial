@@ -9,8 +9,8 @@ data/processed/
 *.egg-info/
 .book/*
 !.book/.gitkeep
-.book-en/*
-!.book-en/.gitkeep
+.book-*/*
+!.book-*/.gitkeep
 site/
 .ipynb_checkpoints/
 

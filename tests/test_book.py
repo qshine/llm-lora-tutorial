@@ -107,41 +107,53 @@ def test_removed_modules_cannot_survive_as_generated_source_downloads(tmp_path):
     assert (tmp_path / 'downloads/source/lab/train.py').read_bytes() == (ROOT / 'lab/train.py').read_bytes()
 
 
-def test_english_edition_builds_with_the_same_pages_and_code(tmp_path):
+TRANSLATIONS = {
+    'en': ('01_gpu_train.en.ipynb', 'The only data file to maintain', 'Expand all raw records'),
+    'ja': ('01_gpu_train.en.ipynb', 'メンテナンスするデータファイルはこれ 1 つだけです', 'すべての元データを展開'),
+    'ko': ('01_gpu_train.en.ipynb', '관리할 데이터 파일은 이것 하나뿐입니다', '전체 원본 레코드 펼치기'),
+}
+
+
+@pytest.mark.parametrize('lang', TRANSLATIONS)
+def test_translated_editions_build_with_the_same_pages_and_code(tmp_path, lang):
+    notebook, data_intro, expand = TRANSLATIONS[lang]
     zh = build_book(ROOT, tmp_path / 'zh')
-    en = build_book(ROOT, tmp_path / 'en', 'en')
+    en = build_book(ROOT, tmp_path / lang, lang)
     # 同一路径两种语言，语言切换才能停留在同一页。
-    assert en['chapters'] == zh['chapters'] and en['source'] == 'tasks/plan.en.md'
+    assert en['chapters'] == zh['chapters'] and en['source'] == f'tasks/plan.{lang}.md'
     pages = lambda folder: sorted(p.relative_to(folder).as_posix() for p in folder.rglob('*.md'))
-    assert pages(tmp_path / 'en') == pages(tmp_path / 'zh')
-    original = (ROOT / 'tasks/plan.en.md').read_text()
-    compiled = '\n'.join((tmp_path / 'en' / page).read_text() for page in en['chapters'])
+    assert pages(tmp_path / lang) == pages(tmp_path / 'zh')
+    original = (ROOT / f'tasks/plan.{lang}.md').read_text()
+    compiled = '\n'.join((tmp_path / lang / page).read_text() for page in en['chapters'])
     pattern = r'^```[^\n]*\n.*?^```$'
     assert re.findall(pattern, compiled, re.M | re.S) == re.findall(pattern, original, re.M | re.S)
-    assert (tmp_path / 'en/chapters/04-training.md').read_text().startswith('# 4. ')
-    assert '../downloads/notebooks/01_gpu_train.en.ipynb' in (tmp_path / 'en/chapters/03-gpu.md').read_text()
-    assert (tmp_path / 'en/downloads/notebooks/01_gpu_train.en.ipynb').read_bytes() == \
-        (ROOT / 'notebooks/01_gpu_train.en.ipynb').read_bytes()
-    viewer = (tmp_path / 'en/reference/code/data/dataset.json.md').read_text()
-    assert 'The only data file to maintain' in viewer and '<summary>Expand all raw records' in viewer
-    assert '[Download the GPU training notebook](../downloads/notebooks/01_gpu_train.en.ipynb)' in \
-        (tmp_path / 'en/reference/sources.md').read_text()
-    for page in (tmp_path / 'en').rglob('*.md'):
+    assert (tmp_path / lang / 'chapters/04-training.md').read_text().startswith('# 4. ')
+    assert f'../downloads/notebooks/{notebook}' in (tmp_path / lang / 'chapters/03-gpu.md').read_text()
+    assert (tmp_path / lang / 'downloads/notebooks' / notebook).read_bytes() == \
+        (ROOT / 'notebooks' / notebook).read_bytes()
+    viewer = (tmp_path / lang / 'reference/code/data/dataset.json.md').read_text()
+    assert data_intro in viewer and f'<summary>{expand}' in viewer
+    assert f'(../downloads/notebooks/{notebook})' in (tmp_path / lang / 'reference/sources.md').read_text()
+    for page in (tmp_path / lang).rglob('*.md'):
         text = re.sub(r'^(`{3,})[^\n]*\n.*?^\1\s*$', '', page.read_text(), flags=re.M | re.S)
         for target in re.findall(r'\]\(([^)\s]+)\)', text):
             if not re.match(r'https?://|mailto:|#', target):
                 assert (page.parent / target.split('#')[0]).exists(), (page, target)
 
 
-def test_both_mkdocs_configs_list_the_same_pages_and_link_each_other():
+@pytest.mark.parametrize('lang', TRANSLATIONS)
+def test_mkdocs_configs_list_the_same_pages_and_link_each_other(lang):
     import yaml
+    from book.build import LANGUAGES
 
     def load(name):
         # Material's !!python/name tags are not used here; plain YAML is enough.
         return yaml.safe_load((ROOT / name).read_text())
 
-    zh, en = load('mkdocs.yml'), load('mkdocs.en.yml')
-    assert en['INHERIT'] == 'mkdocs.yml' and en['theme']['language'] == 'en'
-    assert [list(item.values())[0] for item in zh['nav']] == [list(item.values())[0] for item in en['nav']]
-    assert [alt['lang'] for alt in zh['extra']['alternate']] == [alt['lang'] for alt in en['extra']['alternate']]
-    assert en['site_dir'] == zh['site_dir'] + '/en'
+    zh, other = load('mkdocs.yml'), load(f'mkdocs.{lang}.yml')
+    assert other['INHERIT'] == 'mkdocs.yml' and other['theme']['language'] == lang
+    assert other['docs_dir'] == LANGUAGES[lang]['docs_dir']
+    assert [list(item.values())[0] for item in zh['nav']] == [list(item.values())[0] for item in other['nav']]
+    menu = lambda config: [alt['lang'] for alt in config['extra']['alternate']]
+    assert menu(zh) == menu(other) == list(LANGUAGES)
+    assert other['site_dir'] == f"{zh['site_dir']}/{lang}"

@@ -1,0 +1,73 @@
+# Japanese edition: built into site/ja/ by the book/build.py hook after the Chinese build
+# (or alone with `mkdocs build -f mkdocs.ja.yml`).
+INHERIT: mkdocs.yml
+plugins:
+  - search:
+      lang: [en, ja]
+site_name: "LoRA ファインチューニングと vLLM デプロイ実践ガイド"
+site_description: "ML 未経験の開発者が RTX 4090 1 枚で LoRA ファインチューニングをゼロから学ぶ実践ガイド：QLoRA ファインチューニング、マージとエクスポート、vLLM デプロイ、API 呼び出しと負荷テスト。"
+docs_dir: .book-ja
+site_dir: site/ja
+theme:
+  language: ja
+  palette:
+    - scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: ダークモードに切り替え
+    - scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: ライトモードに切り替え
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      permalink_title: このセクションへのリンクをコピー
+      toc_depth: 3
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tasklist:
+      custom_checkbox: true
+copyright: "LoRA ファインチューニングと vLLM デプロイ実践ガイド"
+extra:
+  generator: false
+  alternate:
+    - name: 中文
+      link: ../
+      lang: zh
+    - name: English
+      link: ../en/
+      lang: en
+    - name: 日本語
+      link: ./
+      lang: ja
+    - name: 한국어
+      link: ../ko/
+      lang: ko
+nav:
+  - はじめに: index.md
+  - 0. 目標と準備: chapters/00-start.md
+  - 1. 必要な概念: chapters/01-concepts.md
+  - 2. 学習データ: chapters/02-data.md
+  - 3. GPU の準備: chapters/03-gpu.md
+  - 4. 学習と検証: chapters/04-training.md
+  - 5. デプロイと API 呼び出し: chapters/05-deployment.md
+  - 6. 効果の評価: chapters/06-evaluation.md
+  - 7. コスト・トラブルシューティング・受け入れ確認: chapters/07-troubleshooting.md
+  - 8. 開発者向けリファレンス: chapters/08-developer.md
+  - 付録 A 中核となる学習コード: chapters/appendix-training-code.md
+  - 付録 B データ早見表: reference/data.md
+  - 付録 C ソースコードのダウンロード: reference/sources.md
+  - 付録 D 学習チェックリスト: reference/checklist.md
+  - 付録 E 検証記録: reference/verification.md
