@@ -2,7 +2,8 @@
 name = "science-lora-lab"
 version = "0.1.0"
 requires-python = ">=3.11,<3.12"
-description = "A learning lab for SFT and QLoRA, using English Primary-school science conversations"
+description = "A learning lab for SFT and QLoRA, using Chinese primary-school science conversations"
+license = {text = "MIT"}
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

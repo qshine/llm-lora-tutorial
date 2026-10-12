@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A Chinese-language learning lab for SFT + QLoRA on `Qwen/Qwen3-4B-Instruct-2507` (pinned revision), themed as a primary-school science companion. The target reader is a non-ML developer (backend, frontend, client, data, …) learning LoRA fine-tuning from scratch, including GPU training and deployment: QLoRA training, reload, BF16 merge, vLLM serving (merged model or a mounted adapter), API calls, and load testing. The main tutorial is `tasks/plan.md`, which is also rendered as a MkDocs e-book. Docs, comments, and user-facing messages are written in Chinese; keep that convention.
+A Chinese-language learning lab for SFT + QLoRA on `Qwen/Qwen3-4B-Instruct-2507` (pinned revision), themed as a primary-school science companion. The target reader is a non-ML developer (backend, frontend, client, data, …) learning LoRA fine-tuning from scratch, including GPU training and deployment: QLoRA training, reload, BF16 merge, vLLM serving (merged model or a mounted adapter), API calls, and load testing. The main tutorial is `tasks/plan.md`, which is also rendered as a MkDocs e-book. Docs, comments, and user-facing messages are written in Chinese; keep that convention. Chinese is the default; the reader-facing materials also have English (`en`), Japanese (`ja`) and Korean (`ko`) editions as `*.<lang>.md` siblings (`README`, `tasks/plan`, `tasks/todo`, `tasks/verification`, `data/README`, `book/home`; `GPU_UPLOAD_README.en.md` is English-only) plus `notebooks/01_gpu_train.en.ipynb` (ja/ko link the English notebook). Code blocks in `plan.ja.md`/`plan.ko.md` are byte-identical to `plan.en.md`. When you change a Chinese doc or the notebook, update every edition in the same change. The dataset and `lab/` code stay Chinese-only. The project is MIT-licensed (`LICENSE`).
 
 The real 4B training runs only on a Linux NVIDIA GPU host (RTX 4090 target). Locally, only data checks, tokenization, and tiny random-model CPU tests run.
 
@@ -37,7 +37,7 @@ Each `lab/*.py` module is a CLI (`python -m lab.<name> --help`): `download`, `da
 - `render_pair` applies the chat template once and produces `input_ids` plus `completion_mask`. The mask covers the current answer plus exactly one `<|im_end|>` EOS. It raises an error instead of truncating or guessing the boundary.
 
 **Two training entry points that must stay in sync:**
-1. `notebooks/01_gpu_train.ipynb` is the main path. It reads the JSON directly in memory (comments D1–D7 mark the data-usage points referenced by the tutorial). It computes `MAX_STEPS = ceil(1150 / 16) = 72` (1 epoch), evaluates val loss every 12 steps, plots `loss-curve.png`, then saves, reloads, merges, and writes artifacts under `runs/science-001/`.
+1. `notebooks/01_gpu_train.ipynb` is the main path (`01_gpu_train.en.ipynb` is its English edition: identical code, translated markdown/comments/messages; `tests/test_notebook.py` checks both and that their code ASTs match). It reads the JSON directly in memory (comments D1–D7 mark the data-usage points referenced by the tutorial). It computes `MAX_STEPS = ceil(1150 / 16) = 72` (1 epoch), evaluates val loss every 12 steps, plots `loss-curve.png`, then saves, reloads, merges, and writes artifacts under `runs/science-001/`.
 2. The CLI path (`lab.prepare` → frozen bundle in `data/processed/<version>/` with `manifest.json` → `lab.train`/`lab.infer`/`lab.evaluate`) is for the advanced experiments: resume, rank comparison, and A/B/C evaluation. `verify_bundle` rejects a bundle if its files or the SHA of `lab/common.py` changed since prepare. **Any edit to `common.py` invalidates existing bundles**, by design.
 
 Shared TRL setup lives in `lab/training.py` (`make_trainer`, `check_supervision`) and is used by both `train.py` and the CPU tests.
@@ -51,11 +51,13 @@ Shared TRL setup lives in `lab/training.py` (`make_trainer`, `check_supervision`
 - Appendix A no longer matches `lab/train.py` and `lab/training.py` byte-for-byte;
 - the vLLM and local-call code blocks in the notebook cells `deploy`/`local-call` differ from those in `plan.md`.
 
+Each check also runs on every translated edition (`plan.<lang>.md` + its notebook), and each must keep the same chapters and the same code blocks as `plan.md` (only comments may differ).
+
 So when you change the code, CLI flags, or the deployment snippets, update `plan.md` (and the notebook) in the same change. `tests/test_notebook.py` executes the notebook's actual code cells against a tiny model, including eval and the loss-curve cell, so it needs matplotlib in `.venv-cpu`.
 
 ## E-book
 
-`book/build.py` is a MkDocs hook. It splits `tasks/plan.md` into pages at `##` headings, using `SLUGS`, which must stay aligned with `mkdocs.yml` nav when chapters are added or reordered. It generates `.book/` (don't hand-edit it) and builds `downloads/lora-lab.zip`. The content sources are `tasks/plan.md`, `tasks/todo.md`, `tasks/verification.md`, and `data/README.md`. `.github/workflows/book-pages.yml` builds and publishes to GitHub Pages.
+`book/build.py` is a MkDocs hook. It splits `tasks/plan.md` into pages at `##` headings, using `SLUGS`, which must stay aligned with the nav of `mkdocs.yml` and every `mkdocs.<lang>.yml` when chapters are added or reordered. After the Chinese build, the hook builds each other edition listed in `book/build.py:LANGUAGES` (`mkdocs.<lang>.yml`, inheriting `mkdocs.yml`, sources `*.<lang>.md`, generated into `.book-<lang>/`) into `site/<lang>/`; the header language menu plus `book/assets/language.js` switch to the same page in another language. It generates `.book/` (don't hand-edit it) and builds `downloads/lora-lab.zip`. The content sources are `tasks/plan.md`, `tasks/todo.md`, `tasks/verification.md`, and `data/README.md`. `.github/workflows/book-pages.yml` builds and publishes to GitHub Pages.
 
 ## GPU upload bundle
 

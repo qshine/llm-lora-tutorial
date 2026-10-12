@@ -13,8 +13,14 @@ import urllib.request
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-PLAN = (ROOT / "tasks/plan.md").read_text()
-NOTEBOOK = json.loads((ROOT / "notebooks/01_gpu_train.ipynb").read_text())
+# 多语言教材：每个译本都要和中文版一样，经得起同样的检查。
+# 日文、韩文版没有单独的 Notebook，配套英文 Notebook（代码块与英文版逐字相同）。
+EDITIONS = {"zh": ("tasks/plan.md", "notebooks/01_gpu_train.ipynb"),
+            "en": ("tasks/plan.en.md", "notebooks/01_gpu_train.en.ipynb"),
+            "ja": ("tasks/plan.ja.md", "notebooks/01_gpu_train.en.ipynb"),
+            "ko": ("tasks/plan.ko.md", "notebooks/01_gpu_train.en.ipynb")}
+PLANS = {lang: (ROOT / plan).read_text() for lang, (plan, _) in EDITIONS.items()}
+NOTEBOOKS = {lang: json.loads((ROOT / notebook).read_text()) for lang, (_, notebook) in EDITIONS.items()}
 
 
 def blocks(text, language):
@@ -23,7 +29,9 @@ def blocks(text, language):
 
 def tutorial_commands():
     commands = []
-    for relative in ("tasks/plan.md", "README.md", "data/README.md"):
+    suffixes = ("", ".en", ".ja", ".ko")
+    for relative in [f"{name}{suffix}.md" for suffix in suffixes
+                     for name in ("tasks/plan", "README", "data/README")]:
         for block in blocks((ROOT / relative).read_text(), "bash"):
             for line in block.replace("\\\n", " ").splitlines():
                 words = shlex.split(line, comments=True)
@@ -60,21 +68,42 @@ def test_every_lab_cli_has_an_executable_example():
     assert entries == modules
 
 
+@pytest.mark.parametrize("lang", EDITIONS)
 @pytest.mark.parametrize("relative", ["lab/train.py", "lab/training.py"])
-def test_training_appendix_matches_source(relative):
-    match = re.search(r"### " + re.escape(relative) + r"\n+```python\n(.*?)\n```", PLAN, re.S)
+def test_training_appendix_matches_source(relative, lang):
+    match = re.search(r"### " + re.escape(relative) + r"\n+```python\n(.*?)\n```", PLANS[lang], re.S)
     assert match and match.group(1).strip() == (ROOT / relative).read_text().strip()
 
 
-def test_notebook_and_book_use_identical_deployment_examples():
-    for cell in NOTEBOOK["cells"]:
+@pytest.mark.parametrize("lang", EDITIONS)
+def test_notebook_and_book_use_identical_deployment_examples(lang):
+    for cell in NOTEBOOKS[lang]["cells"]:
         if cell["id"] in {"deploy", "local-call"}:
             for language in ("bash", "python"):
                 for example in blocks("".join(cell["source"]), language):
-                    assert example in blocks(PLAN, language), cell["id"]
+                    assert example in blocks(PLANS[lang], language), cell["id"]
 
 
-def test_actual_local_api_example_uses_deployed_model_and_generated_history(monkeypatch):
+@pytest.mark.parametrize("lang", [lang for lang in EDITIONS if lang != "zh"])
+def test_translations_mirror_chinese_structure(lang):
+    """Same chapters and the same code; only prose and code comments are translated."""
+    from book.build import split_chapters
+
+    def without_comments(block):
+        return [re.sub(r"(^|\s)(#|//).*$", "", line).rstrip() for line in block.splitlines()]
+
+    fence = r"^```[^\n]*\n.*?^```$"
+    zh, other = (re.findall(fence, PLANS[edition], re.M | re.S) for edition in ("zh", lang))
+    assert len(zh) == len(other)
+    assert [without_comments(block) for block in zh] == [without_comments(block) for block in other]
+    assert len(split_chapters(PLANS["zh"])[1]) == len(split_chapters(PLANS[lang])[1])
+    if lang in ("ja", "ko"):
+        assert other == re.findall(fence, PLANS["en"], re.M | re.S)
+
+
+@pytest.mark.parametrize("lang", EDITIONS)
+def test_actual_local_api_example_uses_deployed_model_and_generated_history(monkeypatch, lang):
+    PLAN = PLANS[lang]
     example, = [block for block in blocks(PLAN, "python")
                 if "build_messages" in block and "urlopen" in block]
     requests = []
@@ -123,11 +152,13 @@ def test_actual_local_api_example_uses_deployed_model_and_generated_history(monk
     assert requests[-1]["messages"][3]["role"] == "user"
 
 
-def test_curl_examples_use_deployed_model_and_training_prompt():
+@pytest.mark.parametrize("lang", EDITIONS)
+def test_curl_examples_use_deployed_model_and_training_prompt(lang):
     from lab.common import build_messages
     from lab.data import read_dataset
 
-    cell = next(cell for cell in NOTEBOOK["cells"] if cell["id"] == "local-call")
+    PLAN = PLANS[lang]
+    cell = next(cell for cell in NOTEBOOKS[lang]["cells"] if cell["id"] == "local-call")
     commands = [block for block in blocks("".join(cell["source"]), "bash") if "curl" in block]
     assert not blocks("".join(cell["source"]), "python")  # 第 13 节只用 curl
     inline = [json.loads(body) for block in commands for body in re.findall(r"-d '(\{.*?\})'", block)]

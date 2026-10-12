@@ -34,6 +34,7 @@ python -m book.check site
 
 ## 内容组织与设计决定
 
+- **多语言**：默认中文，另有 English（`en/`）、日本語（`ja/`）、한국어（`ko/`）。中文站在站点根目录，其他语言在对应子目录，各版页面路径一一对应；右上角语言菜单由 `extra.alternate` 生成，`book/assets/language.js` 让切换后停留在同一页。译文是同名的 `*.<lang>.md`（`tasks/plan`、`tasks/todo`、`tasks/verification`、`data/README`、`book/home`）；英文另有 `notebooks/01_gpu_train.en.ipynb`，日文、韩文版链接英文 Notebook，代码块与英文版逐字相同。`mkdocs.<lang>.yml` 继承 `mkdocs.yml`，只覆盖语言、导航标题、搜索语言和界面文字；`mkdocs build` / `./book_review.sh` 构建中文站后，钩子按 `book/build.py` 的 `LANGUAGES` 自动把其他语言构建到 `site/<lang>/`（生成目录 `.book-<lang>/`）。修改中文正文时同步修改各译本；`tests/test_tutorial.py` 和 `tests/test_book.py` 检查各版章节数、代码块（除注释外）和 Notebook 代码一致。新增或重排章节时，`SLUGS` 与所有 `mkdocs*.yml` 的导航一起改。
 - `book/build.py` 作为构建钩子，把教程的二级标题拆成 15 页，提升章内标题层级，并转换文件链接。代码块逐字保留。
 - `.book/` 为自动生成的 Markdown、源码浏览页、下载包与静态资源；只纳入 `.gitkeep`，不要手工编辑生成内容。每次构建会重建源码浏览和原始源码下载目录，避免删除的模块残留在电子书中。
 - `book/home.md` 管理扉页，`book/assets/book.css` 管理纸色与深色排版；`mkdocs.yml` 管理章节顺序、搜索和目录。
