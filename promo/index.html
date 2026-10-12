@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>LoRA 手册宣传片</title>
+<link rel="stylesheet" href="fonts/fonts.css">
+<style>
+:root{
+  --bg:#121412; --bg2:#181b18; --fg:#ece8de; --mute:#8d9187; --dim:#5b5f57; --rule:#2c302b;
+  --acc:#e2a283; --acc2:#c9694b; --paper:#f4f0e7;
+  --serif:"Noto Serif SC",serif; --sans:"Noto Sans SC",sans-serif; --mono:"JetBrains Mono","Noto Sans SC",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:var(--bg);overflow:hidden}
+body{color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+#stage{position:absolute;inset:0;overflow:hidden;background:var(--bg)}
+#glow{position:absolute;inset:-20%;pointer-events:none;
+  background:radial-gradient(40% 35% at 50% 55%, rgba(201,105,75,.10), transparent 70%),
+             radial-gradient(60% 60% at 50% 50%, rgba(255,255,255,.025), transparent 70%)}
+#vig{position:absolute;inset:0;pointer-events:none;z-index:50;
+  background:radial-gradient(120% 90% at 50% 50%, transparent 55%, rgba(0,0,0,.55) 100%)}
+#black{position:absolute;inset:0;background:#000;z-index:60;opacity:0}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;visibility:hidden;will-change:transform}
+.a{will-change:opacity,transform,filter}
+.kicker{font-family:var(--mono);font-size:22px;letter-spacing:.32em;color:var(--acc);text-transform:uppercase}
+.kicker.cn{font-family:var(--sans);letter-spacing:.42em;font-weight:500}
+.serif{font-family:var(--serif)}
+.mute{color:var(--mute)}
+.acc{color:var(--acc)}
+
+/* chrome: chapter marker + url */
+#chrome{position:absolute;inset:0;z-index:40;pointer-events:none}
+#chap{position:absolute;left:72px;bottom:56px;font-family:var(--mono);font-size:18px;letter-spacing:.2em;color:var(--dim);display:flex;gap:18px;align-items:center}
+#chap .bar{width:56px;height:1px;background:var(--dim);position:relative;overflow:hidden}
+#chap .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--acc);width:0}
+#url{position:absolute;right:72px;bottom:56px;font-family:var(--mono);font-size:18px;letter-spacing:.08em;color:var(--dim)}
+#brand{position:absolute;left:72px;top:56px;font-family:var(--mono);font-size:18px;letter-spacing:.26em;color:var(--dim)}
+
+/* S1 */
+#s1 .l1{font-family:var(--serif);font-weight:500;font-size:76px;letter-spacing:.06em}
+#s1 .l2{font-family:var(--serif);font-weight:700;font-size:76px;letter-spacing:.06em;margin-top:28px}
+#s1 .l3{font-size:30px;font-weight:300;color:var(--mute);margin-top:64px;letter-spacing:.08em}
+.ch{display:inline-block;white-space:pre}
+
+/* S2 */
+#terms{position:absolute;inset:0}
+#terms span{position:absolute;font-family:var(--mono);color:var(--fg);white-space:nowrap}
+#s2 .title{font-family:var(--serif);font-weight:900;font-size:118px;letter-spacing:.02em;line-height:1.2;text-align:center;margin-top:34px}
+#s2 .title .t2{color:var(--fg)}
+#s2 .rule{width:520px;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent);margin:40px auto 38px;transform-origin:center}
+#s2 .sub{font-size:40px;font-weight:300;letter-spacing:.12em}
+#s2 .sub b{font-weight:500;color:var(--acc)}
+#s2 .book{font-family:var(--sans);font-weight:300;letter-spacing:.9em;font-size:34px;color:var(--mute);margin-top:22px;padding-left:.9em}
+
+/* S3 pipeline */
+#s3 .head{font-family:var(--serif);font-weight:700;font-size:58px;letter-spacing:.04em;margin-top:22px}
+#pipe{position:relative;width:1640px;height:330px;margin-top:84px}
+#pipe svg{position:absolute;left:0;top:0;overflow:visible}
+.node{position:absolute;top:0;width:250px;margin-left:-125px;text-align:center}
+.node .num{font-family:var(--mono);font-size:18px;color:var(--dim);letter-spacing:.2em;height:40px}
+.node .dot{width:22px;height:22px;border-radius:50%;margin:0 auto;border:1.5px solid var(--acc);background:var(--bg);position:relative}
+.node .dot i{position:absolute;inset:4px;border-radius:50%;background:var(--acc)}
+.node .lab{font-family:var(--serif);font-weight:700;font-size:36px;margin-top:34px;letter-spacing:.04em;white-space:nowrap}
+.node .det{font-family:var(--mono);font-size:19px;color:var(--mute);margin-top:16px;line-height:1.6;white-space:nowrap}
+#s3 .cap{font-size:32px;font-weight:300;letter-spacing:.06em;margin-top:30px;color:var(--fg)}
+#s3 .cap b{font-weight:500;color:var(--acc)}
+
+/* S4 chat */
+#s4 .wrap{display:flex;gap:110px;align-items:center;margin-top:56px}
+.card{width:880px;border:1px solid var(--rule);border-radius:22px;padding:40px 44px 44px;background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.01))}
+.card .meta{font-family:var(--mono);font-size:18px;color:var(--dim);letter-spacing:.14em;display:flex;justify-content:space-between;margin-bottom:28px}
+.msg{display:flex;margin-top:22px}
+.msg.kid{justify-content:flex-end}
+.bub{max-width:640px;font-size:29px;line-height:1.65;padding:18px 26px;border-radius:20px}
+.kid .bub{background:var(--paper);color:#22251f;border-bottom-right-radius:6px;font-weight:500}
+.bot .bub{background:#20241f;border:1px solid var(--rule);border-bottom-left-radius:6px;color:var(--fg);font-weight:300;min-height:1.65em}
+.who{font-family:var(--mono);font-size:15px;color:var(--dim);letter-spacing:.16em;margin:0 10px 6px}
+.caret{display:inline-block;width:3px;height:1.05em;background:var(--acc);vertical-align:-.15em;margin-left:3px}
+.stats{display:flex;flex-direction:column;gap:46px;width:420px}
+.stat .n{font-family:var(--serif);font-weight:700;font-size:76px;line-height:1;letter-spacing:.01em}
+.stat .n small{font-size:.45em;font-weight:500;color:var(--mute);margin-left:10px;font-family:var(--sans)}
+.stat .d{font-size:24px;color:var(--mute);margin-top:14px;letter-spacing:.06em;font-weight:300}
+#s4 .cap{font-size:32px;font-weight:300;letter-spacing:.06em;margin-top:62px}
+
+/* S5 loss */
+#s5 .head{font-family:var(--serif);font-weight:700;font-size:58px;letter-spacing:.04em;margin-top:22px}
+#s5 .metaRow{display:flex;gap:44px;font-family:var(--mono);font-size:22px;color:var(--mute);margin-top:26px;letter-spacing:.06em}
+#s5 .metaRow i{font-style:normal;color:var(--dim)}
+#s5 .wrap{display:flex;gap:84px;align-items:center;margin-top:50px}
+#chart{width:1040px;height:430px;position:relative}
+#chart svg{position:absolute;inset:0;overflow:visible}
+#chart .yl,#chart .xl{font-family:var(--mono);font-size:16px;fill:var(--dim)}
+#readout{position:absolute;font-family:var(--mono);font-size:18px;color:var(--fg);white-space:nowrap;background:rgba(18,20,18,.85);padding:6px 12px;border:1px solid var(--rule);border-radius:8px}
+.legend{display:flex;gap:28px;font-family:var(--mono);font-size:17px;color:var(--mute);margin-top:6px}
+.legend span::before{content:"";display:inline-block;width:22px;height:2px;vertical-align:middle;margin-right:10px;background:var(--fg)}
+.legend span.e::before{background:var(--acc);height:8px;width:8px;border-radius:50%}
+.nums{display:flex;flex-direction:column;gap:40px;width:400px}
+.num2 .k{font-size:22px;color:var(--mute);letter-spacing:.1em;font-weight:300}
+.num2 .v{font-family:var(--mono);font-size:54px;font-weight:500;margin-top:8px;letter-spacing:-.01em;white-space:nowrap}
+.num2 .v .arr{color:var(--dim);margin:0 14px;font-weight:400}
+.num2 .v .to{color:var(--acc)}
+#s5 .note{font-size:28px;font-weight:300;color:var(--mute);margin-top:54px;letter-spacing:.05em;border-left:2px solid var(--acc2);padding-left:22px}
+#s5 .note b{color:var(--fg);font-weight:500}
+
+/* S6 cost */
+#s6 .price{font-family:var(--serif);font-weight:900;font-size:240px;line-height:1;letter-spacing:-.01em;margin-top:30px}
+#s6 .price small{font-family:var(--sans);font-weight:300;font-size:56px;color:var(--mute);letter-spacing:.06em;margin-left:18px}
+#s6 .gpu{font-family:var(--mono);font-size:26px;color:var(--mute);letter-spacing:.12em;margin-top:26px}
+#s6 .line{font-family:var(--serif);font-weight:700;font-size:58px;letter-spacing:.06em;margin-top:70px}
+#s6 .fine{font-size:20px;color:var(--dim);margin-top:30px;letter-spacing:.08em}
+
+/* S7 honesty */
+#s7 .head{font-family:var(--serif);font-weight:700;font-size:70px;letter-spacing:.06em}
+#s7 ul{list-style:none;margin-top:80px;display:flex;flex-direction:column;gap:42px}
+#s7 li{font-size:36px;font-weight:300;letter-spacing:.05em;display:flex;align-items:baseline;gap:30px}
+#s7 li em{font-family:var(--mono);font-style:normal;font-size:20px;color:var(--acc);letter-spacing:.1em;width:40px}
+#s7 li b{font-weight:500}
+
+/* S8 end */
+#s8 .title{font-family:var(--serif);font-weight:900;font-size:84px;letter-spacing:.03em;text-align:center;line-height:1.3}
+#s8 .tag{font-size:34px;font-weight:300;letter-spacing:.1em;margin-top:30px;color:var(--fg)}
+#s8 .row{display:flex;gap:26px;margin-top:62px;font-family:var(--mono);font-size:22px;color:var(--mute);letter-spacing:.08em}
+#s8 .pill{border:1px solid var(--rule);border-radius:999px;padding:10px 24px}
+#s8 .foot{display:flex;align-items:center;gap:44px;margin-top:64px}
+#s8 .qr{width:176px;height:176px;background:var(--paper);border-radius:14px;padding:14px}
+#s8 .qr img{width:100%;height:100%;display:block}
+#s8 .links{display:flex;flex-direction:column;gap:16px}
+#s8 .links .u{font-family:var(--mono);font-size:30px;color:var(--fg);letter-spacing:.02em}
+#s8 .links .g{font-family:var(--mono);font-size:22px;color:var(--mute)}
+#s8 .links .au{font-size:22px;color:var(--mute);margin-top:10px;letter-spacing:.06em;font-weight:300}
+#s8 .links .au b{color:var(--fg);font-weight:500}
+
+/* ---------- portrait overrides ---------- */
+.port #chap{left:64px;bottom:86px}
+.port #url{right:auto;left:64px;bottom:50px}
+.port #brand{left:64px;top:80px}
+.port #s1 .l1,.port #s1 .l2{font-size:70px}
+.port #s1 .l2 .br{display:block;height:0}
+.port #s1 .l3{font-size:30px;text-align:center;line-height:1.8;padding:0 80px}
+.port #s2 .title{font-size:112px}
+.port #s2 .title .t1,.port #s2 .title .t2{display:block}
+.port #s2 .sub{font-size:38px;text-align:center;line-height:1.7}
+.port #s2 .sub .br{display:block}
+.port #s3 .head{font-size:54px;text-align:center;line-height:1.5}
+.port #s3 .head .br{display:block}
+.port #pipe{width:820px;height:1040px;margin-top:70px}
+.port .node{width:640px;margin-left:0;text-align:left;display:grid;grid-template-columns:60px 46px 1fr;align-items:center;column-gap:22px}
+.port .node .num{height:auto;grid-row:1/span 2;align-self:center}
+.port .node .dot{grid-row:1/span 2;margin:0}
+.port .node .lab{margin-top:0;font-size:42px}
+.port .node .det{margin-top:6px;font-size:21px;grid-column:3}
+.port #s3 .cap{text-align:center;line-height:1.75;font-size:32px;padding:0 70px;margin-top:40px}
+.port #s4 .wrap{flex-direction:column;gap:60px;margin-top:50px}
+.port .card{width:930px}
+.port .stats{flex-direction:row;width:930px;justify-content:space-between;gap:20px}
+.port .stat .n{font-size:64px}
+.port .stat .d{font-size:22px}
+.port #s4 .cap{text-align:center;line-height:1.75;padding:0 80px;margin-top:56px}
+.port #s5 .head{font-size:56px}
+.port #s5 .metaRow{flex-direction:column;gap:8px;align-items:center;font-size:24px}
+.port #s5 .wrap{flex-direction:column;gap:56px;margin-top:56px}
+.port #chart{width:900px;height:520px}
+.port .nums{flex-direction:row;flex-wrap:wrap;width:900px;gap:40px 60px;justify-content:space-between}
+.port .num2 .v{font-size:46px}
+.port #s5 .note{margin:56px 80px 0;line-height:1.75;font-size:29px}
+.port #s6 .price{font-size:220px}
+.port #s6 .price small{display:block;text-align:center;margin:20px 0 0}
+.port #s6 .gpu{font-size:25px;text-align:center;line-height:1.8}
+.port #s6 .line{font-size:58px;text-align:center;line-height:1.5}
+.port #s6 .line .br{display:block}
+.port #s7 .head{font-size:64px;text-align:center;line-height:1.5}
+.port #s7 .head .br{display:block}
+.port #s7 ul{padding:0 70px}
+.port #s7 li{font-size:34px;line-height:1.6;gap:24px}
+.port #s7 li .br{display:block}
+.port #s8 .title{font-size:80px}
+.port #s8 .title .br{display:block}
+.port #s8 .tag{font-size:32px;text-align:center;line-height:1.7}
+.port #s8 .tag .br{display:block}
+.port #s8 .row{flex-direction:column;align-items:center;gap:18px}
+.port #s8 .foot{flex-direction:column;gap:40px}
+.port #s8 .qr{width:230px;height:230px}
+.port #s8 .links{align-items:center;text-align:center}
+.br{display:none}
+.port .br{display:block}
+.port #s1{text-align:center}
+.port #pipe{height:1110px}
+.port .hide-p{display:none}
+.port #s6 .fine{text-align:center;line-height:1.8}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="glow"></div>
+
+  <!-- S1 hook -->
+  <section class="scene" id="s1" data-s="0" data-e="6.667">
+    <div class="l1 split" data-a="0.55" data-st="0.07">你写过很多代码。</div>
+    <div class="l2 split" data-a="2.25" data-st="0.07">却还没有<span class="br"></span>亲手<span class="acc">训练</span>过一个模型。</div>
+    <div class="l3 a" data-a="4.15">LoRA、QLoRA、显存、loss……<span class="br"></span>听过很多次，却总隔着一层。</div>
+  </section>
+
+  <!-- S2 title -->
+  <section class="scene" id="s2" data-s="6.667" data-e="13.333">
+    <div id="terms"></div>
+    <div class="kicker cn a" data-a="7.05">一本写给开发者的实操手册</div>
+    <div class="title"><span class="t1 split" data-a="7.45" data-st="0.045">LoRA 微调与</span><span class="t2 split" data-a="7.85" data-st="0.045"> vLLM 部署</span></div>
+    <div class="book a" data-a="8.7">实操手册</div>
+    <div class="rule" id="s2rule"></div>
+    <div class="sub a" data-a="9.6">在一张 <b>RTX 4090</b> 上，<span class="br"></span>从零走通一次。</div>
+  </section>
+
+  <!-- S3 pipeline -->
+  <section class="scene" id="s3" data-s="13.333" data-e="23.333">
+    <div class="kicker cn a" data-a="13.6">你会亲手走完</div>
+    <div class="head a" data-a="13.85">从一个开源模型，<span class="br"></span>到一个在跑的 API。</div>
+    <div id="pipe"></div>
+    <div class="cap a" data-a="19.9">每一步都讲清楚：<b>显存</b>花在哪里、<b>文件</b>在哪里、<span class="br"></span>怎样<b>确认</b>它真的成功了。</div>
+  </section>
+
+  <!-- S4 data -->
+  <section class="scene" id="s4" data-s="23.333" data-e="30">
+    <div class="kicker cn a" data-a="23.55">练习任务 · 小学科学问答</div>
+    <div class="wrap">
+      <div class="card a" data-a="23.75">
+        <div class="meta"><span>训练数据样例</span><span>1–2 年级 · 昼夜</span></div>
+        <div class="msg kid a" data-a="24.15" data-rise="14"><div class="bub">为什么白天亮、晚上黑？</div></div>
+        <div class="msg bot a" data-a="24.65" data-rise="14"><div class="bub" id="ans1"></div></div>
+        <div class="msg kid a" data-a="26.75" data-rise="14"><div class="bub">太阳晚上关灯睡觉了吧？</div></div>
+        <div class="msg bot a" data-a="27.15" data-rise="14"><div class="bub" id="ans2"></div></div>
+      </div>
+      <div class="stats">
+        <div class="stat a" data-a="24.3"><div class="n" id="c60">60<small>张</small></div><div class="d">事实卡，作为回答依据</div></div>
+        <div class="stat a" data-a="24.7"><div class="n">500<small>/</small>50<small>/</small>50</div><div class="d">段训练 / 验证 / 测试对话</div></div>
+        <div class="stat a" data-a="25.1"><div class="n" id="c1150">1150<small>个</small></div><div class="d">回答目标，按主题隔离</div></div>
+      </div>
+    </div>
+    <div class="cap a" data-a="28.1">对话风格鲜明，微调前后的变化<span class="br"></span>一眼就能看出来。</div>
+  </section>
+
+  <!-- S5 real run -->
+  <section class="scene" id="s5" data-s="30" data-e="40">
+    <div class="kicker a" data-a="30.2">REAL RUN · 2026-10-11</div>
+    <div class="head a" data-a="30.4">第一次完整训练</div>
+    <div class="metaRow a" data-a="30.7"><span>RTX 4090 · 24 GB</span><i class="hide-p">/</i><span>1 Epoch · 72 步</span><i class="hide-p">/</i><span>耗时 26 分 19 秒</span></div>
+    <div class="wrap">
+      <div class="a" data-a="30.9">
+        <div id="chart"></div>
+        <div class="legend"><span>训练 loss</span><span class="e">验证 loss（未见过的主题）</span></div>
+      </div>
+      <div class="nums">
+        <div class="num2 a" data-a="31.4"><div class="k">训练 loss</div><div class="v"><span>5.813</span><span class="arr">→</span><span class="to" id="trv">5.81</span></div></div>
+        <div class="num2 a" data-a="31.8"><div class="k">验证 loss</div><div class="v"><span>2.506</span><span class="arr">→</span><span class="to" id="evv">2.506</span></div></div>
+        <div class="num2 a" data-a="32.2"><div class="k">Token 准确率</div><div class="v"><span>0.462</span><span class="arr">→</span><span class="to" id="acv">0.462</span></div></div>
+      </div>
+    </div>
+    <div class="note a" data-a="36.7">书里也写了失败：<b>没重启内核就重复训练</b>，<span class="br"></span>模型过拟合，验证 loss 回升到 2.3。</div>
+  </section>
+
+  <!-- S6 cost -->
+  <section class="scene" id="s6" data-s="40" data-e="46.667">
+    <div class="kicker cn a" data-a="40.2">门槛，比你想的低</div>
+    <div class="price a" data-a="40.5">¥1.25<small>/ 小时</small></div>
+    <div class="gpu a" data-a="41.0">租一张 RTX 4090D · 24 GB<span class="hide-p">，</span><span class="br"></span>按量计费</div>
+    <div class="line a" data-a="42.4">跑完全书主线，<span class="br"></span>大约三四块钱。</div>
+    <div class="fine a" data-a="43.3">按开机 2～3 小时估算<span class="hide-p"> · </span><span class="br"></span>2026-10-11 页面价格，以下单时为准</div>
+  </section>
+
+  <!-- S7 honesty -->
+  <section class="scene" id="s7" data-s="46.667" data-e="53.333">
+    <div class="head a" data-a="46.95">不夸大，<span class="br"></span>是这本书的底线。</div>
+    <ul>
+      <li class="a" data-a="48.3"><em>01</em><span>微调不一定胜过好的提示词，<span class="br"></span><b>书里教你公平地比</b>。</span></li>
+      <li class="a" data-a="49.5"><em>02</em><span>数据是合成草稿，需要人工审核，<span class="br"></span><b>我们如实标注</b>。</span></li>
+      <li class="a" data-a="50.7"><em>03</em><span>文中的命令与代码，<span class="br"></span><b>由自动化测试逐字核对</b>。</span></li>
+    </ul>
+  </section>
+
+  <!-- S8 end card -->
+  <section class="scene" id="s8" data-s="53.333" data-e="64.5">
+    <div class="title"><span class="split" data-a="53.75" data-st="0.04">LoRA 微调与</span><span class="br"></span><span class="split" data-a="54.2" data-st="0.04"> vLLM 部署实操手册</span></div>
+    <div class="tag a" data-a="55.2">写给每一位<span class="br"></span>想真正弄懂微调的开发者。</div>
+    <div class="row">
+      <span class="pill a" data-a="56.7">免费 · 开源 · MIT</span>
+      <span class="pill a" data-a="56.9">中文 · English · 日本語 · 한국어</span>
+    </div>
+    <div class="foot">
+      <div class="qr a" data-a="57.3"><img src="qr.svg" alt=""></div>
+      <div class="links">
+        <div class="u a" data-a="57.5">qshine.github.io/llm-lora-tutorial</div>
+        <div class="g a" data-a="57.7">github.com/qshine/llm-lora-tutorial</div>
+        <div class="au a" data-a="58.0">作者 <b>qqling</b> · 公众号 qqling的AI小院 · 小红书 AI_qqling</div>
+      </div>
+    </div>
+  </section>
+
+  <div id="chrome">
+    <div id="brand">LoRA · LAB</div>
+    <div id="chap"><span id="chapN">01</span><span class="bar"><i id="chapBar"></i></span><span id="chapT">起点</span></div>
+    <div id="url">qshine.github.io/llm-lora-tutorial</div>
+  </div>
+  <div id="vig"></div>
+  <div id="black"></div>
+</div>
+
+<script>
+const P = new URLSearchParams(location.search);
+const PORT = innerHeight > innerWidth;
+if (PORT) document.documentElement.classList.add('port');
+const BAR = 10 / 3;
+
+// ---------- easing ----------
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const outCubic = x => 1 - Math.pow(1 - clamp(x), 3);
+const outQuint = x => 1 - Math.pow(1 - clamp(x), 5);
+const inOut = x => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const lerp = (a, b, t) => a + (b - a) * t;
+
+// ---------- split text into characters ----------
+document.querySelectorAll('.split').forEach(el => {
+  const t0 = +el.dataset.a, st = +el.dataset.st;
+  let i = 0;
+  const walk = node => {
+    [...node.childNodes].forEach(c => {
+      if (c.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        for (const ch of c.textContent) {
+          const s = document.createElement('span');
+          s.className = 'ch a'; s.textContent = ch;
+          s.dataset.a = (t0 + i * st).toFixed(3); s.dataset.rise = 26; s.dataset.dur = 1.1;
+          i++; frag.appendChild(s);
+        }
+        node.replaceChild(frag, c);
+      } else if (c.nodeType === 1 && !c.classList.contains('br')) walk(c);
+    });
+  };
+  walk(el);
+});
+
+// ---------- S2 floating terms ----------
+const TERMS = ['LoRA', 'QLoRA', 'NF4', 'SFT', 'adapter', 'rank = 16', 'loss', 'BF16', 'vLLM', 'EOS', 'chat template',
+  'gradient', 'tokenizer', 'epoch', 'eval_loss', 'merge', 'OpenAI API', 'completion_mask', 'KV cache', 'throughput'];
+const termsEl = document.getElementById('terms');
+const SPOTS_L = [[.06,.14,.9],[.22,.30,.45],[.09,.47,.7],[.16,.66,.5],[.05,.84,.85],[.27,.90,.4],[.36,.12,.35],[.62,.09,.5],
+  [.80,.16,.8],[.90,.32,.45],[.84,.50,.7],[.91,.68,.5],[.78,.86,.9],[.60,.92,.4],[.44,.95,.3],[.03,.30,.35],[.71,.28,.3],[.26,.77,.3],[.70,.76,.35],[.50,.05,.3]];
+const SPOTS_P = [[.08,.10,.8],[.55,.07,.45],[.20,.18,.4],[.68,.20,.75],[.06,.28,.5],[.62,.31,.35],[.10,.70,.7],[.60,.72,.5],
+  [.20,.80,.45],[.70,.83,.8],[.08,.90,.55],[.50,.93,.4],[.35,.25,.3],[.40,.76,.3],[.75,.12,.3],[.30,.12,.35],[.78,.92,.3],[.05,.62,.3],[.72,.64,.3],[.30,.88,.3]];
+const TERMDATA = TERMS.map((w, i) => {
+  const s = document.createElement('span'); s.textContent = w; termsEl.appendChild(s);
+  const r = (k) => { const x = Math.sin(i * 127.1 + k * 311.7) * 43758.5453; return x - Math.floor(x); };
+  const [x, y, z] = (PORT ? SPOTS_P : SPOTS_L)[i];
+  return { s, x, y, z, vx: (r(4) - .5) * 12, vy: (r(5) - .5) * 6, d: r(6) * 1.2 };
+});
+// ---------- S3 pipeline ----------
+const STEPS = [
+  ['下载模型', 'Qwen3-4B-Instruct\n固定版本 · 逐文件校验'],
+  ['QLoRA 微调', 'NF4 4-bit 基座\n只训练 LoRA adapter'],
+  ['保存与重载', 'adapter/\n重新加载核对'],
+  ['BF16 合并', 'merged-model/\n可独立部署'],
+  ['vLLM 部署', 'OpenAI 兼容 API\n或挂载 adapter'],
+  ['调用与压测', 'curl · OpenAI SDK\nvllm bench serve'],
+];
+const pipe = document.getElementById('pipe');
+const PW = PORT ? 820 : 1640, PH = PORT ? 1040 : 330;
+const nodePos = STEPS.map((_, i) => PORT ? { x: 0, y: 40 + i * 182 } : { x: 125 + i * (PW - 250) / 5, y: 0 });
+pipe.innerHTML = `<svg width="${PW}" height="${PH}"><line id="pl0" stroke="#2c302b" stroke-width="1.5"/><line id="pl1" stroke="#e2a283" stroke-width="2"/></svg>`;
+STEPS.forEach(([lab, det], i) => {
+  const n = document.createElement('div'); n.className = 'node a'; n.dataset.a = (14.45 + i * .8).toFixed(2); n.dataset.rise = 18;
+  n.style.left = nodePos[i].x + 'px'; n.style.top = nodePos[i].y + 'px';
+  n.innerHTML = `<div class="num">0${i + 1}</div><div class="dot"><i></i></div><div class="lab">${lab}</div><div class="det">${det.replace('\n', '<br>')}</div>`;
+  pipe.appendChild(n);
+});
+// line geometry passes through dot centres
+const DOTY = 40 + 11, DOTX = PORT ? 60 + 22 + 11 : 0;
+const L0 = PORT ? [DOTX, nodePos[0].y + 22, DOTX, nodePos[5].y + 22] : [nodePos[0].x, DOTY, nodePos[5].x, DOTY];
+['pl0', 'pl1'].forEach(id => { const l = document.getElementById(id); ['x1', 'y1', 'x2', 'y2'].forEach((k, j) => l.setAttribute(k, L0[j])); });
+
+// ---------- S4 typing ----------
+const A1 = '地球在不停转，我们住的地方转向太阳就是白天，转到背光的一面就是晚上。';
+const A2 = '太阳没有在晚上关灯。是我们所在的地面转到了背向太阳的一侧。';
+
+// ---------- S5 chart (values read from the real 2026-10-11 run) ----------
+const TR = [5.813, 5.93, 6.07, 5.05, 4.38, 3.33, 3.05, 2.65, 2.30, 2.83, 2.87, 2.48, 2.69, 2.52, 2.42, 2.37, 2.42, 2.26, 2.24, 2.35,
+  2.23, 2.17, 2.35, 2.29, 2.02, 2.24, 2.24, 1.85, 1.97, 1.96, 1.90, 1.97, 2.06, 1.93, 1.78, 2.28, 2.16, 2.08, 1.84, 1.65,
+  2.00, 2.03, 1.55, 1.74, 1.95, 1.57, 1.91, 1.60, 1.73, 1.87, 1.84, 1.82, 1.50, 1.51, 1.75, 1.63, 1.59, 1.63, 1.37, 1.44,
+  1.76, 1.64, 1.79, 1.52, 1.75, 1.74, 1.62, 1.65, 1.75, 1.91, 1.85, 1.55];
+const EV = [[12, 2.506], [24, 2.186], [36, 2.034], [48, 1.976], [60, 1.961], [72, 1.960]];
+const ACC = [0.462, 0.573];
+const CW = PORT ? 900 : 1040, CH = PORT ? 520 : 430, PADL = 50, PADB = 40, PADT = 10, PADR = 20;
+const cx = s => PADL + (s / 72) * (CW - PADL - PADR);
+const cy = v => PADT + (6.4 - v) / (6.4 - 1.0) * (CH - PADT - PADB);
+const chart = document.getElementById('chart');
+let grid = '';
+[2, 4, 6].forEach(v => grid += `<line x1="${PADL}" x2="${CW - PADR}" y1="${cy(v)}" y2="${cy(v)}" stroke="#262a25" stroke-width="1"/><text class="yl" x="${PADL - 16}" y="${cy(v) + 5}" text-anchor="end">${v}</text>`);
+[0, 24, 48, 72].forEach(s => grid += `<text class="xl" x="${cx(s)}" y="${CH - 8}" text-anchor="middle">${s}</text>`);
+const trPts = TR.map((v, i) => [cx(i + 1), cy(v)]);
+const trD = trPts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join('');
+const evD = EV.map((p, i) => (i ? 'L' : 'M') + cx(p[0]).toFixed(1) + ' ' + cy(p[1]).toFixed(1)).join('');
+chart.innerHTML = `<svg width="${CW}" height="${CH}">
+ <defs><clipPath id="clip"><rect id="cliprect" x="0" y="-20" width="0" height="${CH + 40}"/></clipPath>
+ <linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ece8de" stop-opacity=".10"/><stop offset="1" stop-color="#ece8de" stop-opacity="0"/></linearGradient></defs>
+ ${grid}
+ <line x1="${PADL}" x2="${CW - PADR}" y1="${CH - PADB}" y2="${CH - PADB}" stroke="#3a3f38"/>
+ <g clip-path="url(#clip)">
+   <path d="${trD}L${cx(72)} ${CH - PADB}L${cx(1)} ${CH - PADB}Z" fill="url(#area)"/>
+   <path d="${trD}" fill="none" stroke="#ece8de" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" opacity=".92"/>
+   <path d="${evD}" fill="none" stroke="#e2a283" stroke-width="3" stroke-linejoin="round"/>
+ </g>
+ ${EV.map((p, i) => `<circle id="ev${i}" cx="${cx(p[0])}" cy="${cy(p[1])}" r="7" fill="#e2a283" stroke="#121412" stroke-width="3" opacity="0"/>`).join('')}
+ <circle id="head" r="6" fill="#ece8de"/><circle id="headGlow" r="16" fill="#ece8de" opacity=".15"/>
+</svg><div id="readout"></div>`;
+const CH0 = 31.2, CH1 = 36.2; // chart draw window
+
+// ---------- chapters ----------
+const CHAPS = [[0, '01', '起点'], [6.667, '02', '这本书'], [13.333, '03', '全链路'], [23.333, '04', '数据'], [30, '05', '实测'],
+  [40, '06', '成本'], [46.667, '07', '诚实'], [53.333, '08', '开始']];
+
+// ---------- render ----------
+const scenes = [...document.querySelectorAll('.scene')];
+const anims = [...document.querySelectorAll('.a')];
+anims.forEach(el => {
+  el._a = +el.dataset.a; el._rise = el.dataset.rise ? +el.dataset.rise : 30; el._dur = el.dataset.dur ? +el.dataset.dur : 1.25;
+  el._scene = el.closest('.scene');
+});
+scenes.forEach(s => { s._s = +s.dataset.s; s._e = +s.dataset.e; });
+
+function sceneOut(s, t) { // 0..1 progress of a scene's exit (last 0.75 s before its end)
+  return outCubic((t - (s._e - .75)) / .7);
+}
+
+function render(t) {
+  scenes.forEach(s => {
+    const vis = t >= s._s - .05 && t <= s._e + .05;
+    s.style.visibility = vis ? 'visible' : 'hidden';
+    if (!vis) return;
+    const k = (t - s._s) / (s._e - s._s);
+    const q = s.id === 's8' ? 0 : sceneOut(s, t);
+    // slow push-in, exit drifts up and softens
+    s.style.transform = `translateY(${-q * 26}px) scale(${1 + 0.018 * k})`;
+    s.style.opacity = 1 - q;
+    s.style.filter = q > 0.001 ? `blur(${q * 7}px)` : 'none';
+  });
+  anims.forEach(el => {
+    if (el._scene && el._scene.style.visibility === 'hidden') return;
+    const p = outQuint((t - el._a) / el._dur);
+    el.style.opacity = p;
+    el.style.transform = `translateY(${(1 - p) * el._rise}px)`;
+    el.style.filter = p < .999 ? `blur(${(1 - p) * 10}px)` : 'none';
+  });
+
+  // glow breathes and drifts
+  const g = document.getElementById('glow');
+  g.style.transform = `translate(${Math.sin(t * .11) * 40}px, ${Math.cos(t * .09) * 30}px) scale(${1 + .05 * Math.sin(t * .2)})`;
+
+  // S2 terms + rule
+  if (t > 6 && t < 14) {
+    TERMDATA.forEach(d => {
+      const local = t - 6.667;
+      const a = outCubic((local - d.d) / 2) * (1 - outCubic((t - 12.4) / .8));
+      const W = innerWidth, H = innerHeight;
+      d.s.style.left = (d.x * W + d.vx * local) + 'px';
+      d.s.style.top = (d.y * H + d.vy * local) + 'px';
+      d.s.style.fontSize = (18 + d.z * 22) + 'px';
+      d.s.style.opacity = a * (.05 + .13 * d.z);
+      d.s.style.filter = `blur(${(1 - d.z) * 3}px)`;
+    });
+    const r = document.getElementById('s2rule');
+    const p = inOut((t - 9.0) / 1.2);
+    r.style.transform = `scaleX(${p})`; r.style.opacity = p;
+  }
+
+  // S3 line draw
+  if (t > 13 && t < 24) {
+    const p = inOut((t - 14.45) / (0.8 * 5 + .2));
+    const l = document.getElementById('pl1');
+    l.setAttribute(PORT ? 'y2' : 'x2', lerp(L0[PORT ? 1 : 0], L0[PORT ? 3 : 2], p));
+    document.querySelectorAll('#pipe .dot i').forEach((d, i) => {
+      const s = outCubic((t - (14.45 + i * .8) - .25) / .5);
+      d.style.transform = `scale(${s})`;
+    });
+  }
+
+  // S4 typing
+  if (t > 23 && t < 30.5) {
+    const type = (id, txt, t0, cps, nextAt) => {
+      const n = Math.floor(clamp((t - t0) * cps, 0, txt.length));
+      const el = document.getElementById(id);
+      const caretOn = t >= t0 - .3 && t < nextAt && (n < txt.length || Math.floor(t * 2.2) % 2 === 0);
+      el.innerHTML = txt.slice(0, n) + (caretOn ? '<span class="caret"></span>' : '');
+    };
+    type('ans1', A1, 25.0, 22, 26.75);
+    type('ans2', A2, 27.55, 24, 31);
+    const c = (id, v, t0, unit) => { const p = outCubic((t - t0) / 1.4); document.getElementById(id).innerHTML = Math.round(v * p) + `<small>${unit}</small>`; };
+    c('c60', 60, 24.3, '张'); c('c1150', 1150, 25.1, '个');
+  }
+
+  // S5 chart draw
+  if (t > 29.5 && t < 40.5) {
+    const p = inOut((t - CH0) / (CH1 - CH0));
+    const step = 1 + p * 71;
+    const x = cx(step);
+    document.getElementById('cliprect').setAttribute('width', x + 2);
+    const i = Math.min(70, Math.floor(step - 1)), f = step - 1 - i;
+    const v = lerp(TR[i], TR[i + 1], f);
+    const hx = x, hy = cy(v);
+    const head = document.getElementById('head'), hg = document.getElementById('headGlow');
+    const hv = p > 0 && t < CH1 + 1.2 ? 1 : outCubic(1 - (t - CH1 - 1.2) / .6);
+    [head, hg].forEach(h => { h.setAttribute('cx', hx); h.setAttribute('cy', hy); });
+    head.setAttribute('opacity', p > 0 ? hv : 0); hg.setAttribute('opacity', p > 0 ? .15 * hv : 0);
+    EV.forEach((e, j) => {
+      const pe = outCubic((step - e[0]) / 2.5 + (step >= 72 ? 1 : 0));
+      const c = document.getElementById('ev' + j);
+      c.setAttribute('opacity', step >= e[0] - .01 ? 1 : 0); c.setAttribute('r', 7 * (step >= e[0] - .01 ? (1 + .6 * (1 - pe)) : 0));
+    });
+    const ro = document.getElementById('readout');
+    const roOp = clamp((t - CH0) / .3) * (1 - clamp((t - CH1 - .9) / .5));
+    ro.style.opacity = roOp;
+    ro.textContent = `step ${String(Math.round(step)).padStart(2, '0')}/72 · loss ${v.toFixed(2)}`;
+    ro.style.left = Math.min(hx + 22, CW - 300) + 'px'; ro.style.top = (hy - 52) + 'px';
+    // numbers settle
+    document.getElementById('trv').textContent = (p >= 1 ? 1.55 : v).toFixed(p >= 1 ? 2 : 2);
+    let ev = EV[0][1]; EV.forEach(e => { if (step >= e[0]) ev = e[1]; });
+    document.getElementById('evv').textContent = ev.toFixed(3);
+    document.getElementById('acv').textContent = lerp(ACC[0], ACC[1], p).toFixed(3);
+  }
+
+  // chapter marker
+  let ci = 0; CHAPS.forEach((c, i) => { if (t >= c[0]) ci = i; });
+  const cs = CHAPS[ci][0], ce = ci + 1 < CHAPS.length ? CHAPS[ci + 1][0] : 64;
+  document.getElementById('chapN').textContent = CHAPS[ci][1];
+  document.getElementById('chapT').textContent = CHAPS[ci][2];
+  document.getElementById('chapBar').style.width = (clamp((t - cs) / (ce - cs)) * 100) + '%';
+  const chromeIn = outCubic((t - 1.0) / 1.5) * (1 - outCubic((t - 53.0) / .8));
+  document.getElementById('chrome').style.opacity = chromeIn;
+
+  // fade to black at the very end
+  document.getElementById('black').style.opacity = clamp((t - 62.6) / 1.4);
+}
+window.render = render;
+window.ready = document.fonts.ready.then(async () => {
+  const fams = ['500 40px "Noto Serif SC"', '700 40px "Noto Serif SC"', '900 40px "Noto Serif SC"', '300 40px "Noto Sans SC"',
+    '400 40px "Noto Sans SC"', '500 40px "Noto Sans SC"', '400 40px "JetBrains Mono"', '500 40px "JetBrains Mono"'];
+  const txt = document.body.innerText + A1 + A2 + TERMS.join('') + 'step loss 0123456789./·→¥';
+  await Promise.all(fams.map(f => document.fonts.load(f, txt)));
+  return true;
+});
+render(+(P.get('t') || 0));
+</script>
+</body>
+</html>
