@@ -12,7 +12,7 @@
 
 **简体中文** · [English](README.en.md) · [日本語](README.ja.md) · [한국어](README.ko.md)
 
-[在线阅读](https://qshine.github.io/llm-lora-tutorial/) · [实操教程](tasks/plan.md) · [GPU Notebook](notebooks/01_gpu_train.ipynb) · [数据说明](data/README.md)
+**[📖 在线阅读电子书](https://qshine.github.io/llm-lora-tutorial/)**（默认中文，页面右上角可切换 English / 日本語 / 한국어）
 
 </div>
 
