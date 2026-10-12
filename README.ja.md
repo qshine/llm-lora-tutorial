@@ -106,6 +106,23 @@ python3.11 -m lab.data --input data/dataset.json --allow-draft
 - [検証ログ](tasks/verification.ja.md)：実際に実行したチェックとその結果。
 - [電子書籍のメンテナンス](book/README.md)（中国語）：ビルド、リンクチェック、公開。
 
+## 著者について
+
+**qqling**：大手テック企業とスタートアップの両方を経験したシニア開発者。AI のヘビーユーザーで、LLM とエージェントの実運用に取り組んでいます。このガイドは、LoRA ファインチューニングとデプロイをゼロから通しで動かすまでの全過程を記録したものです。本書に登場する学習曲線、エラー、トラブルシューティングはすべて実際の作業から得たものです。
+
+- X：[@qqinling](https://x.com/qqinling)
+- 微信公式アカウント：qqling的AI小院
+- 小紅書（RED）：AI_qqling
+
+<table>
+  <tr>
+    <td align="center"><img src="images/author-wechat-qrcode.jpg" alt="微信公式アカウント「qqling的AI小院」の QR コード" width="150"><br><sub>微信公式アカウント：qqling的AI小院</sub></td>
+    <td align="center"><img src="images/author-xiaohongshu-qrcode.jpg" alt="小紅書（RED）アカウント「AI_qqling」の QR コード" width="150"><br><sub>小紅書（RED）：AI_qqling</sub></td>
+  </tr>
+</table>
+
+💻 **GPU のレンタル：** 本書の作業はすべて中国本土向け GPU クラウド [Zhichuan Cloud](https://gpuhome.cc/auth/register?code=zt4f01m0) で借りた GPU で実行しました（著者の招待リンク、招待コード `zt4f01m0`。料金は[電子書籍のトップページ](https://qshine.github.io/llm-lora-tutorial/ja/)を参照）。
+
 ## ライセンス
 
 このプロジェクトは [MIT License](LICENSE) のもとで公開されています。ベースモデル [Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) はこのリポジトリには含まれていません。そのモデル自身のライセンスに従って使用してください。

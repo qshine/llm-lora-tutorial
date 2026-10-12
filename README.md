@@ -106,6 +106,28 @@ Notebook 直接读取这个 JSON，在内存中生成训练样本，无需预先
 - [验证记录](tasks/verification.md)：已经运行的检查及结果。
 - [电子书维护](book/README.md)：构建、链接检查与发布方法。
 
+## 租 GPU
+
+本书的训练、合并、vLLM 部署和压测，都是在 [智川云](https://gpuhome.cc/auth/register?code=zt4f01m0) 租的 GPU 上实际跑完的，按量计费、价格便宜。注册时填写邀请码 **`zt4f01m0`** 可领取新人代金券。
+
+> [!NOTE]
+> 这是作者的邀请链接，你首次充值后作者也会获得平台赠送的代金券。价格与机型配置见[电子书首页](https://qshine.github.io/llm-lora-tutorial/)。
+
+## 关于作者
+
+**qqling**：资深开发者，做过大厂和 Startup；AI 资深玩家，专注大模型与 Agent 落地。这本手册记录了从零走通 LoRA 微调与部署的完整过程，书里的训练曲线、报错和排查都来自真实操作。
+
+- X：[@qqinling](https://x.com/qqinling)
+- 微信公众号：qqling的AI小院
+- 小红书：AI_qqling
+
+<table>
+  <tr>
+    <td align="center"><img src="images/author-wechat-qrcode.jpg" alt="微信公众号“qqling的AI小院”二维码" width="150"><br><sub>微信公众号：qqling的AI小院</sub></td>
+    <td align="center"><img src="images/author-xiaohongshu-qrcode.jpg" alt="小红书“AI_qqling”二维码" width="150"><br><sub>小红书：AI_qqling</sub></td>
+  </tr>
+</table>
+
 ## 许可证
 
 本项目以 [MIT License](LICENSE) 发布。基座模型 [Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) 不随仓库分发，使用时遵循其自身的许可证。
