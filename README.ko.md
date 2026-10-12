@@ -106,6 +106,23 @@ python3.11 -m lab.data --input data/dataset.json --allow-draft
 - [검증 기록](tasks/verification.ko.md): 실제로 실행한 검사와 그 결과.
 - [전자책 유지 관리](book/README.md)(중국어): 빌드, 링크 검사, 배포 방법.
 
+## 저자 소개
+
+**qqling**: 대기업과 스타트업을 모두 거친 시니어 개발자이자, 대규모 언어 모델(LLM)과 에이전트를 실제 서비스에 적용하는 데 집중하는 베테랑 AI 애호가입니다. 이 가이드는 LoRA 파인튜닝과 배포를 처음부터 끝까지 직접 해 본 전체 과정을 기록한 것이며, 책에 나오는 학습 곡선, 오류, 문제 해결 과정은 모두 실제로 실행한 결과입니다.
+
+- X: [@qqinling](https://x.com/qqinling)
+- 위챗 공식 계정: qqling的AI小院
+- 샤오훙슈: AI_qqling
+
+<table>
+  <tr>
+    <td align="center"><img src="images/author-wechat-qrcode.jpg" alt="위챗 공식 계정 “qqling的AI小院” QR 코드" width="150"><br><sub>위챗 공식 계정: qqling的AI小院</sub></td>
+    <td align="center"><img src="images/author-xiaohongshu-qrcode.jpg" alt="샤오훙슈 계정 “AI_qqling” QR 코드" width="150"><br><sub>샤오훙슈: AI_qqling</sub></td>
+  </tr>
+</table>
+
+💻 **GPU 대여:** 이 책의 모든 작업은 중국 본토용 GPU 클라우드 [Zhichuan Cloud](https://gpuhome.cc/auth/register?code=zt4f01m0)에서 빌린 GPU로 실행했습니다(저자의 초대 링크, 초대 코드 `zt4f01m0`. 요금은 [전자책 첫 페이지](https://qshine.github.io/llm-lora-tutorial/ko/) 참고).
+
 ## 라이선스
 
 이 프로젝트는 [MIT License](LICENSE)로 배포됩니다. 베이스 모델 [Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507)은 이 저장소와 함께 배포되지 않으므로, 해당 모델의 라이선스에 따라 사용하세요.

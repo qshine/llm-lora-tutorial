@@ -106,6 +106,23 @@ The notebook reads this JSON directly and builds training samples in memory, so 
 - [Verification log](tasks/verification.en.md): checks that have actually been run, and their results.
 - [E-book maintenance](book/README.md) (Chinese): building, link checking, and publishing.
 
+## About the author
+
+**qqling**: a senior developer who has worked at both big tech companies and startups; a seasoned AI enthusiast focused on putting LLMs and agents into production. This guide records the complete process of getting LoRA fine-tuning and deployment working from scratch; the training curves, errors, and troubleshooting in the book all come from real runs.
+
+- X: [@qqinling](https://x.com/qqinling)
+- WeChat Official Account: qqling的AI小院
+- Xiaohongshu (RED): AI_qqling
+
+<table>
+  <tr>
+    <td align="center"><img src="images/author-wechat-qrcode.jpg" alt="QR code for the WeChat Official Account “qqling的AI小院”" width="150"><br><sub>WeChat Official Account: qqling的AI小院</sub></td>
+    <td align="center"><img src="images/author-xiaohongshu-qrcode.jpg" alt="QR code for the Xiaohongshu (RED) account “AI_qqling”" width="150"><br><sub>Xiaohongshu (RED): AI_qqling</sub></td>
+  </tr>
+</table>
+
+💻 **Renting a GPU:** everything in this book was run on GPUs rented from [Zhichuan Cloud](https://gpuhome.cc/auth/register?code=zt4f01m0), a GPU cloud for mainland China (the author's referral link, invite code `zt4f01m0`; prices are on the [e-book home page](https://qshine.github.io/llm-lora-tutorial/en/)).
+
 ## License
 
 This project is released under the [MIT License](LICENSE). The base model [Qwen3-4B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507) is not distributed with this repository; use it under its own license.
